@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monopoly Game</title>
+    <link rel="stylesheet" href="style.css">
+  
+    
+    
+</head>
+<body>
+    <div class="board">
+
+        <div class="corner" id="go" data-position="0">GO
+            <div class="player-token player-1"></div>
+            <div class="player-token player-2" style="left: 20px;"></div>
+            <div class="player-token player-3" style="left: 40px;"></div> <!-- Added Player 3 -->
+            <div class="player-token player-4" style="left: 60px;"></div> <!-- Added Player 4 -->
+        </div>
+        <div class="corner" id="jail" data-position="10">IN JAIL</div>
+        <div class="corner" id="free-parking" data-position="20">FREE PARKING</div>
+        <div class="corner" id="go-to-jail" data-position="30">GO TO JAIL</div>
+
+        <div class="side horizontal-side" id="bottom-side">
+            <div class="space horizontal-space brown" data-position="1">Mediterranean Avenue<div class="price">$60</div></div>
+            <div class="space horizontal-space" data-position="2">Community Chest</div>
+            <div class="space horizontal-space brown" data-position="3">Baltic Avenue<div class="price">$60</div></div>
+            <div class="space horizontal-space" data-position="4">Income Tax<div class="price">Pay $200</div></div>
+            <div class="space horizontal-space railroad" data-position="5">Reading Railroad<div class="price">$200</div></div>
+            <div class="space horizontal-space light-blue" data-position="6">Oriental Avenue<div class="price">$100</div></div>
+            <div class="space horizontal-space" data-position="7">Chance</div>
+            <div class="space horizontal-space light-blue" data-position="8">Vermont Avenue<div class="price">$100</div></div>
+            <div class="space horizontal-space light-blue" data-position="9">Connecticut Avenue<div class="price">$120</div></div>
+        </div>
+
+        <div class="side vertical-side" id="left-side">
+            <div class="space vertical-space pink" data-position="11">St. Charles Place<div class="price">$140</div></div>
+            <div class="space vertical-space utility" data-position="12">Electric Company<div class="price">$150</div></div>
+            <div class="space vertical-space pink" data-position="13">States Avenue<div class="price">$140</div></div>
+            <div class="space vertical-space pink" data-position="14">Virginia Avenue<div class="price">$160</div></div>
+            <div class="space vertical-space railroad" data-position="15">Pennsylvania Railroad<div class="price">$200</div></div>
+            <div class="space vertical-space orange" data-position="16">St. James Place<div class="price">$180</div></div>
+            <div class="space vertical-space" data-position="17">Community Chest</div>
+            <div class="space vertical-space orange" data-position="18">Tennessee Avenue<div class="price">$180</div></div>
+            <div class="space vertical-space orange" data-position="19">New York Avenue<div class="price">$200</div></div>
+        </div>
+    
+        <div class="side horizontal-side" id="top-side">
+            <div class="space horizontal-space red" data-position="21">Kentucky Avenue<div class="price">$220</div></div>
+            <div class="space horizontal-space" data-position="22">Chance</div>
+            <div class="space horizontal-space red" data-position="23">Indiana Avenue<div class="price">$220</div></div>
+            <div class="space horizontal-space red" data-position="24">Illinois Avenue<div class="price">$240</div></div>
+            <div class="space horizontal-space railroad" data-position="25">B. & O. Railroad<div class="price">$200</div></div>
+            <div class="space horizontal-space yellow" data-position="26">Atlantic Avenue<div class="price">$260</div></div>
+            <div class="space horizontal-space yellow" data-position="27">Ventnor Avenue<div class="price">$260</div></div>
+            <div class="space horizontal-space utility" data-position="28">Water Works<div class="price">$150</div></div>
+            <div class="space horizontal-space yellow" data-position="29">Marvin Gardens<div class="price">$280</div></div>
+        </div>
+
+        <div class="side vertical-side" id="right-side">
+            <div class="space vertical-space green" data-position="31">Pacific Avenue<div class="price">$300</div></div>
+            <div class="space vertical-space green" data-position="32">North Carolina Avenue<div class="price">$300</div></div>
+            <div class="space vertical-space" data-position="33">Community Chest</div>
+            <div class="space vertical-space green" data-position="34">Pennsylvania Avenue<div class="price">$320</div></div>
+            <div class="space vertical-space railroad" data-position="35">Short Line<div class="price">$200</div></div>
+            <div class="space vertical-space blue" data-position="36">Park Place<div class="price">$350</div></div>
+            <div class="space vertical-space" data-position="37">Luxury Tax<div class="price">Pay $100</div></div>
+            <div class="space vertical-space blue" data-position="38">Boardwalk<div class="price">$400</div></div>
+            <div class="space vertical-space" data-position="39">Chance</div>
+        </div>
+    
+        <!-- Center Area -->
+        <div class="center">
+            <div class="center-title">MONOPOLY</div>
+            <div class="chance-card">CHANCE</div>
+            <div class="community-chest-card">COMMUNITY CHEST</div>
+            <div class="free-parking">FREE PARKING</div>
+            <div class="dice-area">
+                <div class="dice" id="dice1">1</div>
+                <div class="dice" id="dice2">6</div>
+            </div>
+            <div class="center-decoration">
+                <div class="tax-area">LUXURY TAX $100</div>
+                <div class="small-text">Collect $200 salary as you pass GO</div>
+                <div class="jail-visitors">In Jail/Just Visiting</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="turn-display" style="text-align: center; font-size: 18px; margin-top: 10px;">
+        Player 1's Turn
+    </div>
+
+    <!-- Control Panel -->
+    <div class="control-panel">
+        <button onclick="rollDice()">🎲 Roll Dice</button>
+        <div class="player-funds" id="player1-funds">Player 1: $1500</div>
+        <div class="player-funds" id="player2-funds">Player 2: $1500</div>
+        <div class="player-funds" id="player3-funds">Player 3: $1500</div>
+        <div class="player-funds" id="player4-funds">Player 4: $1500</div>
+    </div>
+
+    </div>
+</body>
+<script src="script.js" defer></script>
+</html>
