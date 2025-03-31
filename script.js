@@ -32,7 +32,7 @@ function startRollTimer() {
     rollTimer = setInterval(() => {
         if (timeLeft > 0) {
             timeLeft--;
-            if (timerElement) timerElement.textContent = `Time Left: ${timeLeft}s`; // Update the timer display
+            if (timerElement) timerElement.textContent = `Ends in: ${timeLeft}s`; // Update the timer display
         } else {
             clearInterval(rollTimer); // Clear the timer when it reaches 0
             console.log(`Player ${gameState.currentPlayer} failed to roll the dice. Moving to the next player's turn.`);
@@ -75,44 +75,44 @@ const gameState = {
 // Property Data Model
 const propertyData = [
     { position: 0, name: "GO", type: "go" },
-    { position: 1, name: "Mediterranean Avenue", price: 60, rent: 2, color: "brown", owner: null },
+    { position: 1, name: "Mediterranean Avenue", type: "property", price: 60, rent: 2, color: "brown", owner: null },
     { position: 2, name: "Community Chest", type: "community-chest" },
-    { position: 3, name: "Baltic Avenue", price: 60, rent: 4, color: "brown", owner: null },
+    { position: 3, name: "Baltic Avenue", type: "property", price: 60, rent: 4, color: "brown", owner: null },
     { position: 4, name: "Income Tax", type: "tax", amount: 200 },
-    { position: 5, name: "Reading Railroad", price: 200, rent: 25, color: "railroad", owner: null },
-    { position: 6, name: "Oriental Avenue", price: 100, rent: 6, color: "light-blue", owner: null },
+    { position: 5, name: "Reading Railroad", type: "railroad", price: 200, rent: 25, color: "railroad", owner: null },
+    { position: 6, name: "Oriental Avenue", type: "property", price: 100, rent: 6, color: "light-blue", owner: null },
     { position: 7, name: "Chance", type: "chance" },
-    { position: 8, name: "Vermont Avenue", price: 100, rent: 6, color: "light-blue", owner: null },
-    { position: 9, name: "Connecticut Avenue", price: 120, rent: 8, color: "light-blue", owner: null },
+    { position: 8, name: "Vermont Avenue", type: "property", price: 100, rent: 6, color: "light-blue", owner: null },
+    { position: 9, name: "Connecticut Avenue", type: "property", price: 120, rent: 8, color: "light-blue", owner: null },
     { position: 10, name: "Jail", type: "jail" },
-    { position: 11, name: "St. Charles Place", price: 140, rent: 10, color: "pink", owner: null },
-    { position: 12, name: "Electric Company", price: 150, rent: 4, color: "utility", owner: null },
-    { position: 13, name: "States Avenue", price: 140, rent: 10, color: "pink", owner: null },
-    { position: 14, name: "Virginia Avenue", price: 160, rent: 12, color: "pink", owner: null },
-    { position: 15, name: "Pennsylvania Railroad", price: 200, rent: 25, color: "railroad", owner: null },
-    { position: 16, name: "St. James Place", price: 180, rent: 14, color: "orange", owner: null },
+    { position: 11, name: "St. Charles Place", type: "property", price: 140, rent: 10, color: "pink", owner: null },
+    { position: 12, name: "Electric Company", type: "utility", price: 150, rent: 4, color: "utility", owner: null },
+    { position: 13, name: "States Avenue", type: "property", price: 140, rent: 10, color: "pink", owner: null },
+    { position: 14, name: "Virginia Avenue", type: "property", price: 160, rent: 12, color: "pink", owner: null },
+    { position: 15, name: "Pennsylvania Railroad", type: "railroad", price: 200, rent: 25, color: "railroad", owner: null },
+    { position: 16, name: "St. James Place", type: "property", price: 180, rent: 14, color: "orange", owner: null },
     { position: 17, name: "Community Chest", type: "community-chest" },
-    { position: 18, name: "Tennessee Avenue", price: 180, rent: 14, color: "orange", owner: null },
-    { position: 19, name: "New York Avenue", price: 200, rent: 16, color: "orange", owner: null },
+    { position: 18, name: "Tennessee Avenue", type: "property", price: 180, rent: 14, color: "orange", owner: null },
+    { position: 19, name: "New York Avenue", type: "property", price: 200, rent: 16, color: "orange", owner: null },
     { position: 20, name: "Free Parking", type: "free-parking" },
-    { position: 21, name: "Kentucky Avenue", price: 220, rent: 18, color: "red", owner: null },
+    { position: 21, name: "Kentucky Avenue", type: "property", price: 220, rent: 18, color: "red", owner: null },
     { position: 22, name: "Chance", type: "chance" },
-    { position: 23, name: "Indiana Avenue", price: 220, rent: 18, color: "red", owner: null },
-    { position: 24, name: "Illinois Avenue", price: 240, rent: 20, color: "red", owner: null },
-    { position: 25, name: "B. & O. Railroad", price: 200, rent: 25, color: "railroad", owner: null },
-    { position: 26, name: "Atlantic Avenue", price: 260, rent: 22, color: "yellow", owner: null },
-    { position: 27, name: "Ventnor Avenue", price: 260, rent: 22, color: "yellow", owner: null },
-    { position: 28, name: "Water Works", price: 150, rent: 4, color: "utility", owner: null },
-    { position: 29, name: "Marvin Gardens", price: 280, rent: 24, color: "yellow", owner: null },
+    { position: 23, name: "Indiana Avenue", type: "property", price: 220, rent: 18, color: "red", owner: null },
+    { position: 24, name: "Illinois Avenue", type: "property", price: 240, rent: 20, color: "red", owner: null },
+    { position: 25, name: "B. & O. Railroad", type: "railroad", price: 200, rent: 25, color: "railroad", owner: null },
+    { position: 26, name: "Atlantic Avenue", type: "property", price: 260, rent: 22, color: "yellow", owner: null },
+    { position: 27, name: "Ventnor Avenue", type: "property", price: 260, rent: 22, color: "yellow", owner: null },
+    { position: 28, name: "Water Works", type: "utility", price: 150, rent: 4, color: "utility", owner: null },
+    { position: 29, name: "Marvin Gardens", type: "property", price: 280, rent: 24, color: "yellow", owner: null },
     { position: 30, name: "Go To Jail", type: "go-to-jail" },
-    { position: 31, name: "Pacific Avenue", price: 300, rent: 26, color: "green", owner: null },
-    { position: 32, name: "North Carolina Avenue", price: 300, rent: 26, color: "green", owner: null },
+    { position: 31, name: "Pacific Avenue", type: "property", price: 300, rent: 26, color: "green", owner: null },
+    { position: 32, name: "North Carolina Avenue", type: "property", price: 300, rent: 26, color: "green", owner: null },
     { position: 33, name: "Community Chest", type: "community-chest" },
-    { position: 34, name: "Pennsylvania Avenue", price: 320, rent: 28, color: "green", owner: null },
-    { position: 35, name: "Short Line", price: 200, rent: 25, color: "railroad", owner: null },
-    { position: 36, name: "Park Place", price: 350, rent: 35, color: "blue", owner: null },
+    { position: 34, name: "Pennsylvania Avenue", type: "property", price: 320, rent: 28, color: "green", owner: null },
+    { position: 35, name: "Short Line", type: "railroad", price: 200, rent: 25, color: "railroad", owner: null },
+    { position: 36, name: "Park Place", type: "property", price: 350, rent: 35, color: "blue", owner: null },
     { position: 37, name: "Luxury Tax", type: "tax", amount: 100 },
-    { position: 38, name: "Boardwalk", price: 400, rent: 50, color: "blue", owner: null },
+    { position: 38, name: "Boardwalk", type: "property", price: 400, rent: 50, color: "blue", owner: null },
     { position: 39, name: "Chance", type: "chance" }
 ];
 
@@ -373,7 +373,14 @@ const positionMapping = [
 // Updated movePlayer function to use position mapping
 function movePlayer(spaces) {
     const player = gameState.players[gameState.currentPlayer];
+    const previousPosition = player.position;
     player.position = (player.position + spaces) % 40; // Update logical position
+
+    // Reward the player with $200 if they pass or land on GO (position 0)
+    if (player.position < previousPosition) {
+        console.log(`Player ${gameState.currentPlayer} passed GO. Collect $200.`);
+        addMoney(gameState.currentPlayer, 200);
+    }
 
     // Map logical position to visual position
     const visualPosition = positionMapping[player.position];
@@ -397,58 +404,261 @@ function movePlayer(spaces) {
 
 function checkSpaceEffect(position) {
     const player = gameState.currentPlayer;
+    const property = propertyData.find(p => p.position === position);
+
+    if (!property) {
+        console.error(`Property data for position ${position} is undefined.`);
+        return;
+    }
+
+    console.log(`Player ${player} landed on ${property.name}.`);
+
     switch (position) {
         case 0: // GO
-            console.log(`Player ${player} landed on GO. Collect $200.`);
+            console.log(`Player ${player} collects $200 for landing on GO.`);
             addMoney(player, 200);
             break;
-        case 4: // Income Tax
-            console.log(`Player ${player} landed on Income Tax. Pay $200.`);
-            payMoney(player, 200);
 
-            // End the turn after paying tax
-            endTurn();
+        case 1:
+        case 3:
+        case 6:
+        case 8:
+        case 9:
+        case 11:
+        case 13:
+        case 14:
+        case 16:
+        case 18:
+        case 19:
+        case 21:
+        case 23:
+        case 24:
+        case 26:
+        case 27:
+        case 29:
+        case 31:
+        case 32:
+        case 34:
+        case 36:
+        case 38:
+            if (property.type === "property" || property.type === "railroad" || property.type === "utility") {
+                if (property.owner) {
+                    if (property.owner !== player) {
+                        console.log(`Player ${player} landed on "${property.name}" owned by Player ${property.owner}.`);
+                        payRent(position); // Pay rent to the owner
+                    } else {
+                        console.log(`Player ${player} landed on their own property "${property.name}".`);
+                    }
+                } else {
+                    console.log(`Property "${property.name}" is unowned. Offering to Player ${player}.`);
+                    showPurchaseDialog(position); // Open dialog to buy or auction
+                    return; // Do not end the turn yet
+                }
+            }
             break;
-        case 20: // Free Parking
-            console.log(`Player ${player} landed on Free Parking. Nothing happens.`);
-            break;
-        case 38: // Luxury Tax
-            console.log(`Player ${player} landed on Luxury Tax. Pay $100.`);
-            payMoney(player, 100);
-            break;
-        case 30: // Go To Jail
-            console.log(`Player ${player} landed on Go To Jail. Moving to Jail.`);
-            sendToJail(player);
-            break;
-        case 2: // Community Chest
+
+        case 2:
         case 17:
         case 33:
             console.log(`Player ${player} landed on Community Chest.`);
             drawCommunityChestCard(player);
             break;
-        case 7: // Chance
+
+        case 7:
         case 22:
-        case 36:
+        case 39:
             console.log(`Player ${player} landed on Chance.`);
             drawChanceCard(player);
             break;
+
+        case 4: // Income Tax
+            console.log(`Player ${player} landed on Income Tax. Pay $200.`);
+            payMoney(player, 200);
+            break;
+
+        case 37: // Luxury Tax
+            console.log(`Player ${player} landed on Luxury Tax. Pay $100.`);
+            payMoney(player, 100);
+            break;
+
+        case 5:
+        case 15:
+        case 25:
+        case 35:
+            if (property.type === "railroad") {
+                if (property.owner) {
+                    if (property.owner !== player) {
+                        console.log(`Player ${player} landed on "${property.name}" owned by Player ${property.owner}.`);
+                        payRent(position); // Pay rent to the owner
+                    } else {
+                        console.log(`Player ${player} landed on their own railroad "${property.name}".`);
+                    }
+                } else {
+                    console.log(`Railroad "${property.name}" is unowned. Offering to Player ${player}.`);
+                    showPurchaseDialog(position); // Open dialog to buy or auction
+                    return; // Do not end the turn yet
+                }
+            }
+            break;
+
+        case 12:
+        case 28:
+            if (property.type === "utility") {
+                if (property.owner) {
+                    if (property.owner !== player) {
+                        console.log(`Player ${player} landed on "${property.name}" owned by Player ${property.owner}.`);
+                        payRent(position); // Pay rent to the owner
+                    } else {
+                        console.log(`Player ${player} landed on their own utility "${property.name}".`);
+                    }
+                } else {
+                    console.log(`Utility "${property.name}" is unowned. Offering to Player ${player}.`);
+                    showPurchaseDialog(position); // Open dialog to buy or auction
+                    return; // Do not end the turn yet
+                }
+            }
+            break;
+
+        case 10: // Jail (Just Visiting)
+            console.log(`Player ${player} is just visiting Jail.`);
+            break;
+
+        case 20: // Free Parking
+            console.log(`Player ${player} landed on Free Parking. Nothing happens.`);
+            break;
+
+        case 30: // Go To Jail
+            console.log(`Player ${player} landed on Go To Jail. Moving to Jail.`);
+            sendToJail(player);
+            break;
+
         default:
-            handleProperty(position);
+            console.error(`Unhandled position: ${position}`);
     }
+
+    // End the turn after handling the space effect
+    endTurn();
 }
 
 function drawChanceCard(player) {
     const card = gameState.chanceCards.shift(); // Draw the top card
     gameState.chanceCards.push(card); // Put it back at the bottom of the deck
     console.log(`Player ${player} drew a Chance card: ${card.name}`);
-    // Implement Chance card effects here
+
+    // Apply the card's effects
+    if (card.price > 0) {
+        console.log(`Player ${player} receives $${card.price}.`);
+        addMoney(player, card.price); // Add money to the player
+    } else if (card.price < 0) {
+        console.log(`Player ${player} pays $${Math.abs(card.price)}.`);
+        payMoney(player, Math.abs(card.price)); // Deduct money from the player
+    }
+
+    if (card.position !== null) {
+        console.log(`Player ${player} moves to position ${card.position}.`);
+        gameState.players[player].position = card.position; // Update player's position
+        movePlayer(0); // Trigger effects of the new position
+    }
+
+    if (card.name.includes("Get out of Jail Free")) {
+        console.log(`Player ${player} receives a "Get Out of Jail Free" card.`);
+        gameState.players[player].getOutOfJailFree = true; // Add a flag for the card
+    }
+
+    if (card.name.includes("Go back")) {
+        const spaces = Math.abs(card.positionChange);
+        console.log(`Player ${player} moves back ${spaces} spaces.`);
+        gameState.players[player].position = (gameState.players[player].position - spaces + 40) % 40; // Move back
+        movePlayer(0); // Trigger effects of the new position
+    }
+
+    if (card.name.includes("Advance to the nearest utility")) {
+        console.log(`Player ${player} advances to the nearest utility.`);
+        const utilities = [12, 28];
+        const currentPosition = gameState.players[player].position;
+        const nearestUtility = utilities.find(pos => pos > currentPosition) || utilities[0];
+        gameState.players[player].position = nearestUtility;
+        movePlayer(0); // Trigger effects of the new position
+    }
+
+    if (card.name.includes("Advance to the nearest railroad")) {
+        console.log(`Player ${player} advances to the nearest railroad.`);
+        const railroads = [5, 15, 25, 35];
+        const currentPosition = gameState.players[player].position;
+        const nearestRailroad = railroads.find(pos => pos > currentPosition) || railroads[0];
+        gameState.players[player].position = nearestRailroad;
+        movePlayer(0); // Trigger effects of the new position
+    }
+
+    if (card.name.includes("Pay each player")) {
+        const amount = Math.abs(card.price);
+        console.log(`Player ${player} pays $${amount} to each other player.`);
+        for (let i = 1; i <= 4; i++) {
+            if (i !== player) {
+                payMoney(player, amount);
+                addMoney(i, amount);
+            }
+        }
+    }
+
+    if (card.name.includes("Collect from every player")) {
+        const amount = Math.abs(card.price);
+        console.log(`Player ${player} collects $${amount} from each other player.`);
+        for (let i = 1; i <= 4; i++) {
+            if (i !== player) {
+                payMoney(i, amount);
+                addMoney(player, amount);
+            }
+        }
+    }
 }
 
 function drawCommunityChestCard(player) {
     const card = gameState.communityChestCards.shift(); // Draw the top card
     gameState.communityChestCards.push(card); // Put it back at the bottom of the deck
     console.log(`Player ${player} drew a Community Chest card: ${card.name}`);
-    // Implement Community Chest card effects here
+
+    // Apply the card's effects
+    if (card.price > 0) {
+        console.log(`Player ${player} receives $${card.price}.`);
+        addMoney(player, card.price); // Add money to the player
+    } else if (card.price < 0) {
+        console.log(`Player ${player} pays $${Math.abs(card.price)}.`);
+        payMoney(player, Math.abs(card.price)); // Deduct money from the player
+    }
+
+    if (card.position !== null) {
+        console.log(`Player ${player} moves to position ${card.position}.`);
+        gameState.players[player].position = card.position; // Update player's position
+        movePlayer(0); // Trigger effects of the new position
+    }
+
+    if (card.name.includes("Get out of Jail Free")) {
+        console.log(`Player ${player} receives a "Get Out of Jail Free" card.`);
+        gameState.players[player].getOutOfJailFree = true; // Add a flag for the card
+    }
+
+    if (card.name.includes("Pay each player")) {
+        const amount = Math.abs(card.price);
+        console.log(`Player ${player} pays $${amount} to each other player.`);
+        for (let i = 1; i <= 4; i++) {
+            if (i !== player) {
+                payMoney(player, amount);
+                addMoney(i, amount);
+            }
+        }
+    }
+
+    if (card.name.includes("Collect from every player")) {
+        const amount = Math.abs(card.price);
+        console.log(`Player ${player} collects $${amount} from each other player.`);
+        for (let i = 1; i <= 4; i++) {
+            if (i !== player) {
+                payMoney(i, amount);
+                addMoney(player, amount);
+            }
+        }
+    }
 }
 
 // Property Management
@@ -510,7 +720,7 @@ function showPurchaseDialog(position) {
         <p>Rent: $${property.rent}</p>
         <button onclick="buyProperty(${position})">Buy</button>
         <button onclick="startAuction(${position})">Auction</button>
-        <p class="timer">Time left: <span id="action-timer">30</span> seconds</p>
+        <p class="timer">Decide In: <span id="action-timer">30</span> seconds</p>
     `;
     dialogArea.appendChild(dialog);
 
@@ -530,7 +740,7 @@ function startActionTimer(callback) {
     actionTimer = setInterval(() => {
         if (timeLeft > 0) {
             timeLeft--;
-            if (timerElement) timerElement.textContent = timeLeft; // Update the timer display
+            if (timerElement) timerElement.textContent = ` ${timeLeft}s`; // Update the timer display
         } else {
             clearInterval(actionTimer); // Clear the timer when it reaches 0
             callback(); // Execute the callback
@@ -564,11 +774,135 @@ function buyProperty(position) {
 
 function startAuction(position) {
     clearTimeout(actionTimer); // Clear the timer since an action is taken
-    console.log(`Auction started for property at position ${position}.`);
-    // Implement auction logic here
+    const property = propertyData.find(p => p.position === position);
+    if (!property) {
+        console.error(`Property data for position ${position} is undefined.`);
+        return;
+    }
 
-    // Remove the dialog and end the turn
-    document.querySelector('.property-dialog').remove();
+    console.log(`Auction started for property at position ${position}: ${property.name}`);
+
+    const dialogArea = document.getElementById('dialog-area');
+    if (!dialogArea) {
+        console.error('Dialog area not found.');
+        return;
+    }
+
+    // Clear any existing dialog
+    dialogArea.innerHTML = '';
+
+    // Create the auction dialog
+    const auctionDialog = document.createElement('div');
+    auctionDialog.className = 'property-dialog';
+    auctionDialog.innerHTML = `
+        <h3>Auction: ${property.name}</h3>
+        <p>Starting Price: $${property.price}</p>
+        <div id="auction-bids">Highest Bid: $0</div>
+        <p>Select a player to place a bid:</p>
+        <div class="timer-area">
+            <div class="timer" id="action-timer">Auction ends in: 30s</div>
+        </div>
+    `;
+    dialogArea.appendChild(auctionDialog);
+
+    // Initialize auction state
+    gameState.auction = {
+        property: position,
+        highestBid: 0,
+        highestBidder: null,
+        activePlayers: Object.keys(gameState.players).filter(
+            player => !gameState.players[player].isBankrupt
+        )
+    };
+
+    // Add click event listeners to player funds
+    gameState.auction.activePlayers.forEach(player => {
+        const playerFundsElement = document.getElementById(`player${player}-funds`);
+        if (playerFundsElement) {
+            playerFundsElement.style.cursor = 'pointer';
+            playerFundsElement.onclick = () => selectBidder(player);
+        }
+    });
+
+    // Start the auction timer
+    startActionTimer(() => {
+        console.log('Auction timer reached 0. Ending the auction automatically.');
+        endAuction(position);
+    });
+}
+
+function selectBidder(player) {
+    const auction = gameState.auction;
+    if (!auction) {
+        console.error('No active auction.');
+        return;
+    }
+
+    const playerMoney = gameState.players[player].money;
+    const bidAmount = prompt(`Player ${player}, enter your bid (current highest: $${auction.highestBid}):`);
+    const bid = parseInt(bidAmount, 10);
+
+    if (isNaN(bid) || bid <= auction.highestBid) {
+        alert('Invalid bid. Your bid must be higher than the current highest bid.');
+        return;
+    }
+
+    if (bid > playerMoney) {
+        alert('You do not have enough money to place this bid.');
+        return;
+    }
+
+    auction.highestBid = bid;
+    auction.highestBidder = player;
+
+    const auctionBids = document.getElementById('auction-bids');
+    if (auctionBids) {
+        auctionBids.innerHTML = `Highest Bid: $${auction.highestBid} by Player ${auction.highestBidder}`;
+    }
+
+    console.log(`Player ${player} placed a bid of $${bid} for ${propertyData[auction.property].name}`);
+}
+
+function endAuction(position) {
+    const auction = gameState.auction;
+    if (!auction || auction.property !== position) {
+        console.error('No active auction for this property.');
+        return;
+    }
+
+    const dialogArea = document.getElementById('dialog-area');
+    if (dialogArea) {
+        dialogArea.innerHTML = ''; // Clear the auction dialog
+    }
+
+    // Remove click event listeners from player funds
+    auction.activePlayers.forEach(player => {
+        const playerFundsElement = document.getElementById(`player${player}-funds`);
+        if (playerFundsElement) {
+            playerFundsElement.style.cursor = 'default';
+            playerFundsElement.onclick = null;
+        }
+    });
+
+    if (auction.highestBidder) {
+        const winner = auction.highestBidder;
+        const bidAmount = auction.highestBid;
+
+        // Deduct money and assign property
+        addMoney(winner, -bidAmount);
+        propertyData[position].owner = winner;
+
+        console.log(`Player ${winner} won the auction for ${propertyData[position].name} with a bid of $${bidAmount}`);
+        alert(`Player ${winner} won the auction for ${propertyData[position].name} with a bid of $${bidAmount}`);
+    } else {
+        console.log('No bids were placed. The property remains unowned.');
+        alert('No bids were placed. The property remains unowned.');
+    }
+
+    // Clear auction state
+    gameState.auction = null;
+
+    // End the turn
     endTurn();
 }
 
@@ -586,6 +920,28 @@ function payMoney(player, amount) {
     }
 }
 
+function payRent(position) {
+    const property = propertyData.find(p => p.position === position);
+    const currentPlayer = gameState.currentPlayer;
+
+    if (!property || !property.owner || property.owner === currentPlayer) {
+        console.error(`Invalid property or no rent to pay for position ${position}.`);
+        return;
+    }
+
+    const rent = property.rent;
+    const owner = property.owner;
+
+    if (gameState.players[currentPlayer].money >= rent) {
+        console.log(`Player ${currentPlayer} pays $${rent} in rent to Player ${owner}.`);
+        payMoney(currentPlayer, rent);
+        addMoney(owner, rent);
+    } else {
+        console.log(`Player ${currentPlayer} cannot afford the rent of $${rent}.`);
+        handleBankruptcy(currentPlayer);
+    }
+}
+
 // Jail System
 function sendToJail(player) {
     gameState.players[player].inJail = true;
@@ -596,7 +952,12 @@ function sendToJail(player) {
 // Turn Management
 function endTurn() {
     console.log(`Ending Player ${gameState.currentPlayer}'s turn.`);
-    gameState.currentPlayer = (gameState.currentPlayer % 4) + 1;
+
+    // Find the next active player
+    do {
+        gameState.currentPlayer = (gameState.currentPlayer % 4) + 1;
+    } while (gameState.players[gameState.currentPlayer].isBankrupt);
+
     updateTurnDisplay(); // Update the UI to show the current player's turn
     console.log(`It's now Player ${gameState.currentPlayer}'s turn.`);
     startRollTimer(); // Start the roll timer for the next player
@@ -679,4 +1040,28 @@ initGame();
 updateFundsDisplay();
 updateTurnDisplay();
 startRollTimer();
+
+function handleBankruptcy(player) {
+    console.log(`Player ${player} is bankrupt!`);
+
+    // Remove ownership of all properties owned by the bankrupt player
+    propertyData.forEach(property => {
+        if (property.owner === player) {
+            property.owner = null;
+            console.log(`Property "${property.name}" is now unowned.`);
+        }
+    });
+
+    // Set the player's money to 0
+    gameState.players[player].money = 0;
+
+    // Mark the player as bankrupt and remove them from the game
+    gameState.players[player].isBankrupt = true;
+
+    // Notify other players
+    alert(`Player ${player} is bankrupt and has been removed from the game!`);
+
+    // Skip the bankrupt player's turn
+    endTurn();
+}
 
