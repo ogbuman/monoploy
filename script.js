@@ -75,44 +75,44 @@ const gameState = {
 // Property Data Model
 const propertyData = [
     { position: 0, name: "GO", type: "go" },
-    { position: 1, name: "Mediterranean Avenue", type: "property", price: 60, rent: 2, color: "brown", owner: null },
+    { position: 1, name: "Mediterranean Avenue", type: "property", price: 60, rent: 2, color: "brown", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 30, rentOneHouse: 10, rentTwoHouses: 30, rentThreeHouses: 90, rentHotel: 160 },
     { position: 2, name: "Community Chest", type: "community-chest" },
-    { position: 3, name: "Baltic Avenue", type: "property", price: 60, rent: 4, color: "brown", owner: null },
+    { position: 3, name: "Baltic Avenue", type: "property", price: 60, rent: 4, color: "brown", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 30, rentOneHouse: 20, rentTwoHouses: 60, rentThreeHouses: 180, rentHotel: 320 },
     { position: 4, name: "Income Tax", type: "tax", amount: 200 },
-    { position: 5, name: "Reading Railroad", type: "railroad", price: 200, rent: 25, color: "railroad", owner: null },
-    { position: 6, name: "Oriental Avenue", type: "property", price: 100, rent: 6, color: "light-blue", owner: null },
+    { position: 5, name: "Reading Railroad", type: "railroad", price: 200, rent: 25, color: "railroad", owner: null, mortgaged: false, loanableAmount: 100 },
+    { position: 6, name: "Oriental Avenue", type: "property", price: 100, rent: 6, color: "light-blue", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 50, rentOneHouse: 30, rentTwoHouses: 90, rentThreeHouses: 270, rentHotel: 400 },
     { position: 7, name: "Chance", type: "chance" },
-    { position: 8, name: "Vermont Avenue", type: "property", price: 100, rent: 6, color: "light-blue", owner: null },
-    { position: 9, name: "Connecticut Avenue", type: "property", price: 120, rent: 8, color: "light-blue", owner: null },
+    { position: 8, name: "Vermont Avenue", type: "property", price: 100, rent: 6, color: "light-blue", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 50, rentOneHouse: 30, rentTwoHouses: 90, rentThreeHouses: 270, rentHotel: 400 },
+    { position: 9, name: "Connecticut Avenue", type: "property", price: 120, rent: 8, color: "light-blue", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 60, rentOneHouse: 40, rentTwoHouses: 100, rentThreeHouses: 300, rentHotel: 450 },
     { position: 10, name: "Jail", type: "jail" },
-    { position: 11, name: "St. Charles Place", type: "property", price: 140, rent: 10, color: "pink", owner: null },
-    { position: 12, name: "Electric Company", type: "utility", price: 150, rent: 4, color: "utility", owner: null },
-    { position: 13, name: "States Avenue", type: "property", price: 140, rent: 10, color: "pink", owner: null },
-    { position: 14, name: "Virginia Avenue", type: "property", price: 160, rent: 12, color: "pink", owner: null },
-    { position: 15, name: "Pennsylvania Railroad", type: "railroad", price: 200, rent: 25, color: "railroad", owner: null },
-    { position: 16, name: "St. James Place", type: "property", price: 180, rent: 14, color: "orange", owner: null },
+    { position: 11, name: "St. Charles Place", type: "property", price: 140, rent: 10, color: "pink", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 70, rentOneHouse: 50, rentTwoHouses: 150, rentThreeHouses: 450, rentHotel: 625 },
+    { position: 12, name: "Electric Company", type: "utility", price: 150, rent: 4, color: "utility", owner: null, mortgaged: false, loanableAmount: 75 },
+    { position: 13, name: "States Avenue", type: "property", price: 140, rent: 10, color: "pink", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 70, rentOneHouse: 50, rentTwoHouses: 150, rentThreeHouses: 450, rentHotel: 625 },
+    { position: 14, name: "Virginia Avenue", type: "property", price: 160, rent: 12, color: "pink", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 80, rentOneHouse: 60, rentTwoHouses: 180, rentThreeHouses: 500, rentHotel: 700 },
+    { position: 15, name: "Pennsylvania Railroad", type: "railroad", price: 200, rent: 25, color: "railroad", owner: null, mortgaged: false, loanableAmount: 100 },
+    { position: 16, name: "St. James Place", type: "property", price: 180, rent: 14, color: "orange", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 90, rentOneHouse: 70, rentTwoHouses: 200, rentThreeHouses: 550, rentHotel: 750 },
     { position: 17, name: "Community Chest", type: "community-chest" },
-    { position: 18, name: "Tennessee Avenue", type: "property", price: 180, rent: 14, color: "orange", owner: null },
-    { position: 19, name: "New York Avenue", type: "property", price: 200, rent: 16, color: "orange", owner: null },
+    { position: 18, name: "Tennessee Avenue", type: "property", price: 180, rent: 14, color: "orange", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 90, rentOneHouse: 70, rentTwoHouses: 200, rentThreeHouses: 550, rentHotel: 750 },
+    { position: 19, name: "New York Avenue", type: "property", price: 200, rent: 16, color: "orange", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 100, rentOneHouse: 80, rentTwoHouses: 220, rentThreeHouses: 600, rentHotel: 800 },
     { position: 20, name: "Free Parking", type: "free-parking" },
-    { position: 21, name: "Kentucky Avenue", type: "property", price: 220, rent: 18, color: "red", owner: null },
+    { position: 21, name: "Kentucky Avenue", type: "property", price: 220, rent: 18, color: "red", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 110, rentOneHouse: 90, rentTwoHouses: 250, rentThreeHouses: 700, rentHotel: 875 },
     { position: 22, name: "Chance", type: "chance" },
-    { position: 23, name: "Indiana Avenue", type: "property", price: 220, rent: 18, color: "red", owner: null },
-    { position: 24, name: "Illinois Avenue", type: "property", price: 240, rent: 20, color: "red", owner: null },
-    { position: 25, name: "B. & O. Railroad", type: "railroad", price: 200, rent: 25, color: "railroad", owner: null },
-    { position: 26, name: "Atlantic Avenue", type: "property", price: 260, rent: 22, color: "yellow", owner: null },
-    { position: 27, name: "Ventnor Avenue", type: "property", price: 260, rent: 22, color: "yellow", owner: null },
-    { position: 28, name: "Water Works", type: "utility", price: 150, rent: 4, color: "utility", owner: null },
-    { position: 29, name: "Marvin Gardens", type: "property", price: 280, rent: 24, color: "yellow", owner: null },
+    { position: 23, name: "Indiana Avenue", type: "property", price: 220, rent: 18, color: "red", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 110, rentOneHouse: 90, rentTwoHouses: 250, rentThreeHouses: 700, rentHotel: 875 },
+    { position: 24, name: "Illinois Avenue", type: "property", price: 240, rent: 20, color: "red", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 120, rentOneHouse: 100, rentTwoHouses: 300, rentThreeHouses: 750, rentHotel: 925 },
+    { position: 25, name: "B. & O. Railroad", type: "railroad", price: 200, rent: 25, color: "railroad", owner: null, mortgaged: false, loanableAmount: 100 },
+    { position: 26, name: "Atlantic Avenue", type: "property", price: 260, rent: 22, color: "yellow", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 130, rentOneHouse: 110, rentTwoHouses: 330, rentThreeHouses: 800, rentHotel: 975 },
+    { position: 27, name: "Ventnor Avenue", type: "property", price: 260, rent: 22, color: "yellow", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 130, rentOneHouse: 110, rentTwoHouses: 330, rentThreeHouses: 800, rentHotel: 975 },
+    { position: 28, name: "Water Works", type: "utility", price: 150, rent: 4, color: "utility", owner: null, mortgaged: false, loanableAmount: 75 },
+    { position: 29, name: "Marvin Gardens", type: "property", price: 280, rent: 24, color: "yellow", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 140, rentOneHouse: 120, rentTwoHouses: 360, rentThreeHouses: 850, rentHotel: 1025 },
     { position: 30, name: "Go To Jail", type: "go-to-jail" },
-    { position: 31, name: "Pacific Avenue", type: "property", price: 300, rent: 26, color: "green", owner: null },
-    { position: 32, name: "North Carolina Avenue", type: "property", price: 300, rent: 26, color: "green", owner: null },
+    { position: 31, name: "Pacific Avenue", type: "property", price: 300, rent: 26, color: "green", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 150, rentOneHouse: 130, rentTwoHouses: 390, rentThreeHouses: 900, rentHotel: 1100 },
+    { position: 32, name: "North Carolina Avenue", type: "property", price: 300, rent: 26, color: "green", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 150, rentOneHouse: 130, rentTwoHouses: 390, rentThreeHouses: 900, rentHotel: 1100 },
     { position: 33, name: "Community Chest", type: "community-chest" },
-    { position: 34, name: "Pennsylvania Avenue", type: "property", price: 320, rent: 28, color: "green", owner: null },
-    { position: 35, name: "Short Line", type: "railroad", price: 200, rent: 25, color: "railroad", owner: null },
-    { position: 36, name: "Park Place", type: "property", price: 350, rent: 35, color: "blue", owner: null },
+    { position: 34, name: "Pennsylvania Avenue", type: "property", price: 320, rent: 28, color: "green", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 160, rentOneHouse: 150, rentTwoHouses: 450, rentThreeHouses: 1000, rentHotel: 1200 },
+    { position: 35, name: "Short Line", type: "railroad", price: 200, rent: 25, color: "railroad", owner: null, mortgaged: false, loanableAmount: 100 },
+    { position: 36, name: "Park Place", type: "property", price: 350, rent: 35, color: "blue", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 175, rentOneHouse: 175, rentTwoHouses: 500, rentThreeHouses: 1100, rentHotel: 1300 },
     { position: 37, name: "Luxury Tax", type: "tax", amount: 100 },
-    { position: 38, name: "Boardwalk", type: "property", price: 400, rent: 50, color: "blue", owner: null },
+    { position: 38, name: "Boardwalk", type: "property", price: 400, rent: 50, color: "blue", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 200, rentOneHouse: 200, rentTwoHouses: 600, rentThreeHouses: 1400, rentHotel: 1700 },
     { position: 39, name: "Chance", type: "chance" }
 ];
 
@@ -545,6 +545,12 @@ function drawChanceCard(player) {
     gameState.chanceCards.push(card); // Put it back at the bottom of the deck
     console.log(`Player ${player} drew a Chance card: ${card.name}`);
 
+    // Display the card content in the chance-card div
+    const chanceCardElement = document.querySelector('.chance-card');
+    if (chanceCardElement) {
+        chanceCardElement.textContent = card.name;
+    }
+
     // Apply the card's effects
     if (card.price > 0) {
         console.log(`Player ${player} receives $${card.price}.`);
@@ -617,6 +623,12 @@ function drawCommunityChestCard(player) {
     const card = gameState.communityChestCards.shift(); // Draw the top card
     gameState.communityChestCards.push(card); // Put it back at the bottom of the deck
     console.log(`Player ${player} drew a Community Chest card: ${card.name}`);
+
+    // Display the card content in the community-chest-card div
+    const communityChestCardElement = document.querySelector('.community-chest-card');
+    if (communityChestCardElement) {
+        communityChestCardElement.textContent = card.name;
+    }
 
     // Apply the card's effects
     if (card.price > 0) {
@@ -753,22 +765,30 @@ function buyProperty(position) {
     const property = propertyData.find(p => p.position === position);
     const player = gameState.currentPlayer;
 
+    if (!property) {
+        console.error(`Property at position ${position} not found.`);
+        return;
+    }
+
+    if (property.owner) {
+        alert(`${property.name} is already owned.`);
+        return;
+    }
+
     if (gameState.players[player].money >= property.price) {
         property.owner = player;
         addMoney(player, -property.price);
         updatePropertiesDisplay();
 
-        // Debugging information
         console.log(`Property "${property.name}" purchased by Player ${player}`);
-        console.log(`Owner: Player ${property.owner}`);
-        console.log(`Token Color: ${getPlayerColor(player)}`);
-        console.log(`Property Color: ${document.querySelector(`[data-position="${position}"]`).style.backgroundColor}`);
+        alert(`Player ${player} purchased ${property.name} for $${property.price}.`);
 
         // Remove the dialog and end the turn
-        document.querySelector('.property-dialog').remove();
+        const dialog = document.querySelector('.property-dialog');
+        if (dialog) dialog.remove();
         endTurn();
     } else {
-        console.error(`Player ${player} does not have enough money to buy "${property.name}".`);
+        alert(`Player ${player} does not have enough money to buy "${property.name}".`);
     }
 }
 
@@ -829,6 +849,7 @@ function startAuction(position) {
         console.log('Auction timer reached 0. Ending the auction automatically.');
         endAuction(position);
     });
+
 }
 
 function selectBidder(player) {
@@ -894,6 +915,24 @@ function endAuction(position) {
 
         console.log(`Player ${winner} won the auction for ${propertyData[position].name} with a bid of $${bidAmount}`);
         alert(`Player ${winner} won the auction for ${propertyData[position].name} with a bid of $${bidAmount}`);
+
+        // Update property display to reflect ownership
+        const space = document.querySelector(`[data-position="${position}"]`);
+        if (space) {
+            let ownershipMarker = space.querySelector('.ownership-marker');
+            if (!ownershipMarker) {
+                ownershipMarker = document.createElement('div');
+                ownershipMarker.className = 'ownership-marker';
+                space.appendChild(ownershipMarker);
+
+                
+            }
+            console.log(winner)
+            ownershipMarker.style.backgroundColor = getPlayerColor(winner); 
+            console.log(getPlayerColor(winner))
+        }
+
+        updatePropertiesDisplay(); // Ensure the correct color and ownership are applied
     } else {
         console.log('No bids were placed. The property remains unowned.');
         alert('No bids were placed. The property remains unowned.');
@@ -904,6 +943,26 @@ function endAuction(position) {
 
     // End the turn
     endTurn();
+}
+
+function updatePropertiesDisplay() {
+    propertyData.forEach(property => {
+        const space = document.querySelector(`[data-position="${property.position}"]`);
+        if (space) {
+            let ownershipMarker = space.querySelector('.ownership-marker');
+            if (!ownershipMarker) {
+                ownershipMarker = document.createElement('div');
+                ownershipMarker.className = 'ownership-marker';
+                space.appendChild(ownershipMarker);
+            }
+
+            if (property.owner) {
+                ownershipMarker.style.backgroundColor = getPlayerColor(property.owner);
+            } else {
+                ownershipMarker.style.backgroundColor = 'transparent';
+            }
+        }
+    });
 }
 
 // Money Management
@@ -976,21 +1035,6 @@ function updateFundsDisplay() {
     }
 }
 
-function updatePropertiesDisplay() {
-    propertyData.forEach(property => {
-        const space = document.querySelector(`[data-position="${property.position}"]`);
-        if (property.owner) {
-            space.style.backgroundColor = getPlayerColor(property.owner); // Assign player's color
-            space.classList.add(`owned-${property.owner}`);
-
-            // Debugging information
-            console.log(`Updated property "${property.name}" at position ${property.position}`);
-            console.log(`Owner: Player ${property.owner}`);
-            console.log(`Assigned Color: ${getPlayerColor(property.owner)}`);
-        }
-    });
-}
-
 // UI Updates
 function updateTurnDisplay() {
     const turnDisplay = document.getElementById('turn-display');
@@ -1026,14 +1070,20 @@ function updateTurnDisplay() {
 }
 
 function getPlayerColor(player) {
-    switch (player) {
+    const validPlayer = Number(player); // Convert to a number
+    switch (validPlayer) {
         case 1: return 'var(--color-player-1)'; // Blue
         case 2: return 'var(--color-player-2)'; // Green
         case 3: return 'var(--color-player-3)'; // Yellow
         case 4: return 'var(--color-player-4)'; // Purple
-        default: return 'var(--color-border)';
+        default:
+            console.error(`Invalid player number: ${player}`);
+            return 'transparent';
     }
 }
+
+
+
 
 // Initialize the game
 initGame();
@@ -1063,5 +1113,173 @@ function handleBankruptcy(player) {
 
     // Skip the bankrupt player's turn
     endTurn();
+}
+
+function manageProperties() {
+    const currentPlayer = gameState.currentPlayer;
+    const playerProperties = propertyData.filter(property => property.owner === currentPlayer);
+
+    if (playerProperties.length === 0) {
+        alert(`Player ${currentPlayer} has no properties to manage.`);
+        return;
+    }
+
+    const dialogArea = document.getElementById('dialog-area');
+    if (!dialogArea) {
+        console.error('Dialog area not found.');
+        return;
+    }
+
+    // Clear any existing dialog
+    dialogArea.innerHTML = '';
+
+    // Create the property management dialog
+    const dialog = document.createElement('div');
+    dialog.className = 'property-management-dialog';
+    dialog.innerHTML = `
+        <h3>Manage Properties</h3>
+        <ul>
+            ${playerProperties.map(property => `
+                <li>
+                    ${property.name} (${property.color})
+                    <button onclick="mortgageProperty(${property.position})">Mortgage</button>
+                    <button onclick="offerProperty(${property.position})">Offer to Player</button>
+                </li>
+            `).join('')}
+        </ul>
+        <h4>Make an Offer</h4>
+        <label for="offer-property">Property to Buy:</label>
+        <select id="offer-property">
+            ${propertyData.filter(property => property.owner && property.owner !== currentPlayer).map(property => `
+                <option value="${property.position}">${property.name} (Player ${property.owner})</option>
+            `).join('')}
+        </select>
+        <label for="offer-price">Offer Price:</label>
+        <input type="number" id="offer-price" min="1" />
+        <button onclick="makeOffer()">Make Offer</button>
+        <button onclick="closeDialog()">Close</button>
+    `;
+    dialogArea.appendChild(dialog);
+}
+
+function mortgageProperty(position) {
+    const property = propertyData.find(p => p.position === position);
+    if (!property || property.owner !== gameState.currentPlayer) {
+        alert('You can only mortgage properties you own.');
+        return;
+    }
+
+    if (property.mortgaged) {
+        alert(`${property.name} is already mortgaged.`);
+        return;
+    }
+
+    property.mortgaged = true;
+    addMoney(gameState.currentPlayer, property.loanableAmount);
+    alert(`${property.name} has been mortgaged for $${property.loanableAmount}.`);
+    updatePropertiesDisplay();
+}
+
+function offerProperty(position) {
+    const property = propertyData.find(p => p.position === position);
+    if (!property || property.owner !== gameState.currentPlayer) {
+        alert('You can only offer properties you own.');
+        return;
+    }
+
+    const price = prompt(`Enter the price to offer ${property.name}:`);
+    if (!price || isNaN(price) || price <= 0) {
+        alert('Invalid price.');
+        return;
+    }
+
+    const dialogArea = document.getElementById('dialog-area');
+    if (!dialogArea) {
+        console.error('Dialog area not found.');
+        return;
+    }
+
+    // Clear any existing dialog
+    dialogArea.innerHTML = '';
+
+    // Create the offer dialog
+    const dialog = document.createElement('div');
+    dialog.className = 'offer-dialog';
+    dialog.innerHTML = `
+        <h3>Offer ${property.name} for $${price}</h3>
+        <ul>
+            ${Object.keys(gameState.players).filter(player => player != gameState.currentPlayer).map(player => `
+                <li>
+                    Player ${player}
+                    <button onclick="sendOffer(${position}, ${player}, ${price})">Send Offer</button>
+                </li>
+            `).join('')}
+        </ul>
+        <button onclick="closeDialog()">Close</button>
+    `;
+    dialogArea.appendChild(dialog);
+}
+
+function sendOffer(position, player, price) {
+    const property = propertyData.find(p => p.position === position);
+    if (!property) {
+        alert('Invalid property.');
+        return;
+    }
+
+    const accept = confirm(`Player ${player}, do you accept the offer to buy ${property.name} for $${price}?`);
+    if (accept) {
+        if (gameState.players[player].money >= price) {
+            property.owner = player;
+            addMoney(gameState.currentPlayer, price);
+            payMoney(player, price);
+            alert(`Player ${player} bought ${property.name} for $${price}.`);
+            updatePropertiesDisplay();
+            closeDialog();
+        } else {
+            alert(`Player ${player} does not have enough money.`);
+        }
+    } else {
+        alert(`Player ${player} declined the offer.`);
+    }
+}
+
+function makeOffer() {
+    const propertyPosition = document.getElementById('offer-property').value;
+    const price = document.getElementById('offer-price').value;
+
+    if (!propertyPosition || !price || isNaN(price) || price <= 0) {
+        alert('Invalid offer.');
+        return;
+    }
+
+    const property = propertyData.find(p => p.position == propertyPosition);
+    if (!property) {
+        alert('Invalid property.');
+        return;
+    }
+
+    const accept = confirm(`Player ${property.owner}, do you accept the offer to sell ${property.name} for $${price}?`);
+    if (accept) {
+        if (gameState.players[gameState.currentPlayer].money >= price) {
+            property.owner = gameState.currentPlayer;
+            addMoney(property.owner, price);
+            payMoney(gameState.currentPlayer, price);
+            alert(`Player ${gameState.currentPlayer} bought ${property.name} for $${price}.`);
+            updatePropertiesDisplay();
+            closeDialog();
+        } else {
+            alert(`Player ${gameState.currentPlayer} does not have enough money.`);
+        }
+    } else {
+        alert(`Player ${property.owner} declined the offer.`);
+    }
+}
+
+function closeDialog() {
+    const dialogArea = document.getElementById('dialog-area');
+    if (dialogArea) {
+        dialogArea.innerHTML = ''; // Clear the dialog
+    }
 }
 
