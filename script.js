@@ -128,120 +128,200 @@ const shuffleArray = (array) => {
 // Initialize card decks
 const chanceActions = [
     {
-        detail: "Advance to Go (Collect $200)",
-        reward: 200,
+        name: "Advance to Go (Collect $200)",
+        price: 200,
         positionChange: 0,
-        newPosition: 0
+        position: 0
     },
     {
-        detail: "Go to Jail. Go directly to Jail. Do not pass Go. Do not collect $200.",
-        reward: 0,
+        name: "Go to Jail. Go directly to Jail. Do not pass Go. Do not collect $200.",
+        price: 0,
         positionChange: 0,
-        newPosition: 10 // Jail position
+        position: 10 // Jail position
     },
     {
-        detail: "Advance to Illinois Avenue. If you pass Go, collect $200.",
-        reward: 200,
+        name: "Advance to Illinois Avenue. If you pass Go, collect $200.",
+        price: 200,
         positionChange: 0,
-        newPosition: 24
+        position: 24
     },
     {
-        detail: "Advance to St. Charles Place. If you pass Go, collect $200.",
-        reward: 200,
+        name: "Advance to St. Charles Place. If you pass Go, collect $200.",
+        price: 200,
         positionChange: 0,
-        newPosition: 11
+        position: 11
     },
     {
-        detail: "Take a trip to Reading Railroad. If you pass Go, collect $200.",
-        reward: 200,
+        name: "Take a trip to Reading Railroad. If you pass Go, collect $200.",
+        price: 200,
         positionChange: 0,
-        newPosition: 5
+        position: 5
     },
     {
-        detail: "Take a walk on the Boardwalk. Advance token to Boardwalk.",
-        reward: 0,
+        name: "Take a walk on the Boardwalk. Advance token to Boardwalk.",
+        price: 0,
         positionChange: 0,
-        newPosition: 38
+        position: 38
     },
     {
-        detail: "Go back three spaces.",
-        reward: 0,
+        name: "Go back three spaces.",
+        price: 0,
         positionChange: -3,
-        newPosition: null
+        position: null
     },
     {
-        detail: "Bank pays you dividend of $50.",
-        reward: 50,
+        name: "Bank pays you dividend of $50.",
+        price: 50,
         positionChange: 0,
-        newPosition: null
+        position: null
     },
     {
-        detail: "Get out of Jail Free. This card may be kept until needed or sold.",
-        reward: 0,
+        name: "Get out of Jail Free. This card may be kept until needed or sold.",
+        price: 0,
         positionChange: 0,
-        newPosition: null
+        position: null
     },
     {
-        detail: "Make general repairs on all your property. For each house pay $25. For each hotel pay $100.",
-        reward: -100, // Example penalty
+        name: "Make general repairs on all your property. For each house pay $25. For each hotel pay $100.",
+        price: -100, // Example penalty
         positionChange: 0,
-        newPosition: null
+        position: null
     },
     {
-        detail: "Pay poor tax of $15.",
-        reward: -15,
+        name: "Pay poor tax of $15.",
+        price: -15,
         positionChange: 0,
-        newPosition: null
+        position: null
     },
     {
-        detail: "You have been elected Chairman of the Board. Pay each player $50.",
-        reward: -50,
+        name: "You have been elected Chairman of the Board. Pay each player $50.",
+        price: -50,
         positionChange: 0,
-        newPosition: null
+        position: null
     },
     {
-        detail: "Your building loan matures. Collect $150.",
-        reward: 150,
+        name: "Your building loan matures. Collect $150.",
+        price: 150,
         positionChange: 0,
-        newPosition: null
+        position: null
     },
     {
-        detail: "Advance to the nearest utility. If unowned, you may buy it from the Bank. If owned, throw dice and pay owner a total ten times the amount thrown.",
-        reward: 0,
+        name: "Advance to the nearest utility. If unowned, you may buy it from the Bank. If owned, throw dice and pay owner a total ten times the amount thrown.",
+        price: 0,
         positionChange: 0,
-        newPosition: null // Logic to find nearest utility will be implemented
+        position: null // Logic to find nearest utility will be implemented
     },
     {
-        detail: "Advance to the nearest railroad. If unowned, you may buy it from the Bank. If owned, pay owner twice the rental to which they are otherwise entitled.",
-        reward: 0,
+        name: "Advance to the nearest railroad. If unowned, you may buy it from the Bank. If owned, pay owner twice the rental to which they are otherwise entitled.",
+        price: 0,
         positionChange: 0,
-        newPosition: null // Logic to find nearest railroad will be implemented
+        position: null // Logic to find nearest railroad will be implemented
     },
     {
-        detail: "Go back to the nearest railroad and pay double rent if owned.",
-        reward: 0,
+        name: "Go back to the nearest railroad and pay double rent if owned.",
+        price: 0,
         positionChange: 0,
-        newPosition: null // Logic to find nearest railroad will be implemented
+        position: null // Logic to find nearest railroad will be implemented
     }
 ];
 
 const communityChestActions = [
-    "Advance to Go (Collect $200)",
-    "Bank error in your favor. Collect $200.",
-    "Doctor's fees. Pay $50.",
-    "From sale of stock, you get $50.",
-    "Get out of Jail Free. This card may be kept until needed or sold.",
-    "Go to Jail. Go directly to Jail. Do not pass Go. Do not collect $200.",
-    "Grand Opera Night. Collect $50 from every player for opening night seats.",
-    "Holiday Fund matures. Receive $100.",
-    "Income tax refund. Collect $20.",
-    "It is your birthday. Collect $10 from every player.",
-    "Life insurance matures. Collect $100.",
-    "Pay hospital fees of $100.",
-    "Pay school fees of $150.",
-    "Receive $25 consultancy fee.",
-    "You are assessed for street repairs. $40 per house. $115 per hotel.",
-    "You have won second prize in a beauty contest. Collect $10."
+    {
+        name: "Advance to Go (Collect $200)",
+        price: 200,
+        positionChange: 0,
+        position: 0
+    },
+    {
+        name: "Bank error in your favor. Collect $200.",
+        price: 200,
+        positionChange: 0,
+        position: null
+    },
+    {
+        name: "Doctor's fees. Pay $50.",
+        price: -50,
+        positionChange: 0,
+        position: null
+    },
+    {
+        name: "From sale of stock, you get $50.",
+        price: 50,
+        positionChange: 0,
+        position: null
+    },
+    {
+        name: "Get out of Jail Free. This card may be kept until needed or sold.",
+        price: 0,
+        positionChange: 0,
+        position: null
+    },
+    {
+        name: "Go to Jail. Go directly to Jail. Do not pass Go. Do not collect $200.",
+        price: 0,
+        positionChange: 0,
+        position: 10 // Jail position
+    },
+    {
+        name: "Grand Opera Night. Collect $50 from every player for opening night seats.",
+        price: 50,
+        positionChange: 0,
+        position: null
+    },
+    {
+        name: "Holiday Fund matures. Receive $100.",
+        price: 100,
+        positionChange: 0,
+        position: null
+    },
+    {
+        name: "Income tax refund. Collect $20.",
+        price: 20,
+        positionChange: 0,
+        position: null
+    },
+    {
+        name: "It is your birthday. Collect $10 from every player.",
+        price: 10,
+        positionChange: 0,
+        position: null
+    },
+    {
+        name: "Life insurance matures. Collect $100.",
+        price: 100,
+        positionChange: 0,
+        position: null
+    },
+    {
+        name: "Pay hospital fees of $100.",
+        price: -100,
+        positionChange: 0,
+        position: null
+    },
+    {
+        name: "Pay school fees of $150.",
+        price: -150,
+        positionChange: 0,
+        position: null
+    },
+    {
+        name: "Receive $25 consultancy fee.",
+        price: 25,
+        positionChange: 0,
+        position: null
+    },
+    {
+        name: "You are assessed for street repairs. $40 per house. $115 per hotel.",
+        price: -40, // Example penalty for houses
+        positionChange: 0,
+        position: null
+    },
+    {
+        name: "You have won second prize in a beauty contest. Collect $10.",
+        price: 10,
+        positionChange: 0,
+        position: null
+    }
 ];
 
 // Modified initGame function
@@ -360,14 +440,14 @@ function checkSpaceEffect(position) {
 function drawChanceCard(player) {
     const card = gameState.chanceCards.shift(); // Draw the top card
     gameState.chanceCards.push(card); // Put it back at the bottom of the deck
-    console.log(`Player ${player} drew a Chance card: ${card.detail}`);
+    console.log(`Player ${player} drew a Chance card: ${card.name}`);
     // Implement Chance card effects here
 }
 
 function drawCommunityChestCard(player) {
     const card = gameState.communityChestCards.shift(); // Draw the top card
     gameState.communityChestCards.push(card); // Put it back at the bottom of the deck
-    console.log(`Player ${player} drew a Community Chest card: ${card}`);
+    console.log(`Player ${player} drew a Community Chest card: ${card.name}`);
     // Implement Community Chest card effects here
 }
 
