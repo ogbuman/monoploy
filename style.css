@@ -1,10 +1,32 @@
+:root {
+    --color-blue: #0000ff;
+    --color-green: #008000;
+    --color-yellow: #ffff00;
+    --color-purple: #800080;
+    --color-red: #ff0000;
+    --color-orange: #ffa500;
+    --color-pink: #ff69b4;
+    --color-brown: #8b4513;
+    --color-light-blue: #87ceeb;
+    --color-railroad: #000;
+    --color-utility: #98fb98;
+    --color-board-bg: #fff3cd;
+    --color-border: #654321;
+    --color-white: #ffffff;
+    --color-player-1: #7a35e9; /* Blue */
+    --color-player-2: #00f500; /* Green */
+    /* --color-player-3: #ffff00;  */
+    --color-player-3: #dddd7b; /* Yellow */
+    --color-player-4: #800080; /* Purple */
+}
+
 .board {
     width: 690px;
     height: 690px;
-    background: #fff3cd;
+    background: var(--color-board-bg);
     margin: 50px auto;
     position: relative;
-    border: 2px solid #654321;
+    border: 2px solid var(--color-border);
     border-radius: 10px;
     box-sizing: border-box;
 }
@@ -14,7 +36,7 @@
     height: 88px;
     position: absolute;
     background: #ffe8a1;
-    border: 1px solid #654321;
+    border: 1px solid var(--color-border);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -24,16 +46,14 @@
     box-sizing: border-box;
 }
 
-
 .side {
     position: absolute;
     display: flex;
     box-sizing: border-box;
 }
 
-
 .space {
-    border: 1px solid #654321;
+    border: 1px solid var(--color-border);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -71,10 +91,6 @@
     left: 0;
 }
 
-
-
-
-
 #bottom-side {
     bottom: 0;
     left: 88px;
@@ -98,63 +114,65 @@
     flex-direction: column;
 }
 
-
-
 /* Property colors */
 .brown {
-    background: #8b4513;
-    color: white;
+    background: var(--color-brown);
+    color: var(--color-white);
 }
 
 .light-blue {
-    background: #87ceeb;
+    background: var(--color-light-blue);
 }
 
 .pink {
-    background: #ff69b4;
+    background: var(--color-pink);
 }
 
 .orange {
-    background: #ffa500;
+    background: var(--color-orange);
 }
 
 .red {
-    background: #ff0000;
-    color: white;
+    background: var(--color-red);
+    color: var(--color-white);
 }
 
 .yellow {
-    background: #ffff00;
+    background: var(--color-yellow);
 }
 
 .green {
-    background: #008000;
-    color: white;
+    background: var(--color-green);
+    color: var(--color-white);
 }
 
 .blue {
-    background: #0000ff;
-    color: white;
+    background: var(--color-blue);
+    color: var(--color-white);
+}
+
+.purple {
+    background: var(--color-purple); /* For properties, if applicable */
 }
 
 .railroad {
-    background: #000;
-    color: white;
+    background: var(--color-railroad);
+    color: var(--color-white);
 }
 
 .utility {
-    background: #98fb98;
+    background: var(--color-utility);
 }
 
 .center {
     position: absolute;
     width: 400px;
     height: 400px;
-    background: #fff3cd;
+    background: var(--color-board-bg);
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    border: 2px solid #654321;
+    border: 2px solid var(--color-border);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -168,22 +186,21 @@
     height: 90px;
     background: #ffd700;
     transform: rotate(45deg);
-    border: 2px solid #654321;
+    border: 2px solid var(--color-border);
 }
 
 .community-chest {
     position: absolute;
     width: 60px;
     height: 90px;
-    background: #98fb98;
+    background: var(--color-utility);
     transform: rotate(-45deg);
-    border: 2px solid #654321;
+    border: 2px solid var(--color-border);
 }
-
 
 .center-title {
     font-size: 48px;
-    color: #654321;
+    color: var(--color-border);
     margin-bottom: 20px;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
@@ -193,7 +210,7 @@
     width: 80px;
     height: 120px;
     position: absolute;
-    border: 2px solid #654321;
+    border: 2px solid var(--color-border);
     padding: 10px;
     font-size: 12px;
     display: flex;
@@ -209,7 +226,7 @@
 }
 
 .community-chest-card {
-    background: #98fb98;
+    background: var(--color-utility);
     transform: rotate(-10deg);
     bottom: 30px;
     right: 30px;
@@ -224,7 +241,7 @@
 .dice-area {
     width: 100px;
     height: 100px;
-    border: 2px solid #654321;
+    border: 2px solid var(--color-border);
     margin: 10px;
     display: flex;
     justify-content: space-around;
@@ -245,38 +262,16 @@
 }
 
 .jail-visitors {
-    border-top: 1px dashed #654321;
+    border-top: 1px dashed var(--color-border);
     padding-top: 5px;
     margin-top: 5px;
 }
-
-
-.red {
-    background: #ff0000;
-    color: white;
-}
-
-.yellow {
-    background: #ffff00;
-}
-
-.green {
-    background: #008000;
-    color: white;
-}
-
-.blue {
-    background: #0000ff;
-    color: white;
-}
-
 
 .vertical-space {
     writing-mode: vertical-rl;
     transform: rotate(180deg);
     line-height: 1.2;
 }
-
 
 .horizontal-space {
     width: 56.7px;
@@ -299,13 +294,6 @@
     line-height: 1.2;
 }
 
-
-
-
-
-
-
-
 .player-token {
     width: 15px;
     height: 15px;
@@ -313,24 +301,29 @@
     position: absolute;
     bottom: 3px;
     left: 3px;
-    border: 2px solid white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    border: 2px solid var(--color-white); /* Ensure visibility for all tokens */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4); /* Add shadow for better contrast */
 }
 
 .player-1 {
-    background: #ff0000;
+    background: var(--color-blue);
+    background-color: var(--color-player-1);
 }
 
 .player-2 {
-    background: #00ff00;
+    background: var(--color-green);
+    background-color: var(--color-player-2);
 }
 
 .player-3 {
-    background: #0000ff; /* Blue */
+    background: var(--color-yellow);
+    background-color: var(--color-player-3);
 }
 
 .player-4 {
-    background: #ff00ff; /* Purple */
+    background: var(--color-purple);
+    background-color: var(--color-player-4); /* Purple for Player 4 */
+  
 }
 
 /* Property Prices */
@@ -358,13 +351,13 @@
 .dice {
     width: 40px;
     height: 40px;
-    border: 2px solid #654321;
+    border: 2px solid var(--color-border);
     margin: 5px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 20px;
-    background: white;
+    background: var(--color-white);
 }
 
 .rolling .dice {
@@ -376,21 +369,16 @@
     position: fixed;
     top: 20px;
     right: 20px;
-    background: #fff3cd;
+    background: var(--color-board-bg);
     padding: 15px;
-    border: 2px solid #654321;
+    border: 2px solid var(--color-border);
     border-radius: 8px;
     min-width: 200px;
-    
-
-    /* display: flex; */
-  
 }
 
-
 .control-panel button {
-    background: #8b4513;
-    color: white;
+    background: var(--color-player-1); /* Default to Player 1's color */
+    color: var(--color-white);
     border: none;
     padding: 8px 15px;
     border-radius: 4px;
@@ -399,44 +387,64 @@
 }
 
 .control-panel button:hover {
-    background: #654321;
+    background: var(--color-border); /* Keep hover effect consistent */
 }
 
 .player-funds {
     font-size: 12px;
     margin: 5px 0;
     padding: 5px;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.9); /* Default background */
     border-radius: 3px;
+    color: black; /* Default text color */
 }
 
+#player1-funds {
+    color: var(--color-player-1); /* Blue for Player 1 */
+}
 
+#player2-funds {
+    color: var(--color-player-2); /* Green for Player 2 */
+}
 
+#player3-funds {
+    color: var(--color-player-3); /* Yellow for Player 3 */
+}
 
+#player4-funds {
+    color: var(--color-player-4); /* Purple for Player 4 */
+}
 
+#turn-display {
+    text-align: center;
+    font-size: 18px;
+    margin-top: 10px;
+    color: black; /* Default text color */
+    font-weight: bold;
+}
 
+/* Highlighted player funds and turn display */
+.player-funds.active {
+    font-weight: bold;
+}
 
-
-
-
-
-
-
-
-
-
+#turn-display.active {
+    font-weight: bold;
+}
 
 /* Additional CSS for new features */
-.property-dialog {
+/* .property-dialog {
     position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
+    top: 20px;
+    right: 240px; 
+    background: var(--color-white);
     padding: 20px;
-    border: 2px solid #654321;
+    border: 2px solid var(--color-border);
+    border-radius: 8px;
     z-index: 1000;
-}
+    width: 200px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+} */
 
 .owned-marker {
     width: 10px;
@@ -447,10 +455,21 @@
     right: 2px;
 }
 
-.owned-1 { background: #ff0000; }
-.owned-2 { background: #00ff00; }
-.owned-3 { background: #0000ff; }
-.owned-4 { background: #ff00ff; }
+.owned-1 {
+    background: var(--color-blue);
+}
+
+.owned-2 {
+    background: var(--color-green);
+}
+
+.owned-3 {
+    background: var(--color-yellow);
+}
+
+.owned-4 {
+    background: var(--color-purple);
+}
 
 .houses {
     position: absolute;
@@ -466,52 +485,119 @@
     background: #00ff00;
 }
 
-
-
- 
-
-
-
 .player-1 {
-    background-color: blue;
+    /* background-color: var(--color-blue);  */
+    background-color: var(--color-player-1);
 }
+
 .player-2 {
-    background-color: green;
+    /* background-color: var(--color-green); */
+    background-color: var(--color-player-2);
 }
+
 .player-3 {
-    background-color: yellow;
+    /* background-color: var(--color-yellow); */
+    background-color: var(--color-player-3);
 }
+
 .player-4 {
-    background-color: purple;
+    background-color: var(--color-player-4); /* Purple for Player 4 */
+    /* border: 2px solid var(--color-white); Ensure visibility */
+    /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4); Add shadow for better contrast */
 }
+
 .player-funds {
-    margin: 0 20px;
+    margin: 10px 20px;
     font-size: 18px;
 }
+
 .player-funds span {
     font-weight: bold;
 }
+
 .player-funds:nth-child(1) {
-    color: blue;
+    color: var(--color-player-1); /* Ensure consistent blue for Player 1 */
 }
+
 .player-funds:nth-child(2) {
-    color: green;
+    color: var(--color-player-2); /* Ensure consistent green for Player 2 */
 }
+
 .player-funds:nth-child(3) {
-    color: yellow;
+    color: var(--color-player-3); /* Ensure consistent yellow for Player 3 */
 }
+
 .player-funds:nth-child(4) {
-    color: purple;
+    color: var(--color-player-4); /* Ensure consistent purple for Player 4 */
 }
-.player-funds:nth-child(5) {
-    color: red;
-}
-.player-funds:nth-child(6) {
-    color: orange;
-}
-.player-funds:nth-child(7) {
-    color: pink;
-}
+
+.player-funds:nth-child(5),
+.player-funds:nth-child(6),
+.player-funds:nth-child(7),
 .player-funds:nth-child(8) {
-    color: brown;
+    display: none; /* Ensure this does not affect the fourth player */
+}
+
+.space.owned-1 {
+    border: 2px solid var(--color-player-1); /* Blue border for Player 1 */
+    background: var(--color-player-1); /* Corrected to Player 1's color */
+}
+
+.space.owned-2 {
+    border: 2px solid var(--color-player-2); /* Green border for Player 2 */
+    background: var(--color-player-2); /* Corrected to Player 2's color */
+}
+
+.space.owned-3 {
+    border: 2px solid var(--color-player-3); /* Yellow border for Player 3 */
+    background: var(--color-player-3); /* Corrected to Player 3's color */
+}
+
+.space.owned-4 {
+    border: 2px solid var(--color-player-4); /* Purple border for Player 4 */
+    background: var(--color-player-4); /* Corrected to Player 4's color */
+}
+
+/* #dialog-area {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    width: 250px;
+    z-index: 1000;
+}
+
+.property-dialog {
+    background: var(--color-white);
+    padding: 20px;
+    border: 2px solid var(--color-border);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+}
+
+.property-dialog .timer {
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--color-red);
+    text-align: center;
+} */
+
+.timer-area {
+    margin-top: 10px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--color-red);
+    background: rgba(255, 255, 255, 0.8);
+    padding: 5px;
+    border: 2px solid var(--color-border);
+    border-radius: 5px;
+    display: inline-block;
+    width: 100%;
+}
+
+.timer {
+    font-size: 18px;
+    color: var(--color-red);
 }
