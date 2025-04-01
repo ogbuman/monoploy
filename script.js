@@ -1,8 +1,17 @@
 // Dice Rolling Logic
 let rollTimer; // Timer for the 30-second countdown to roll the dice
+let rollCount = 0; // Track the number of consecutive rolls in a turn
+let hasRolled = false; // Track if the player has already rolled in their turn
 
 function rollDice() {
-    clearTimeout(rollTimer); // Clear the timer since the dice is being rolled
+    if (hasRolled) {
+        console.log(`Player ${gameState.currentPlayer} has already rolled. They can manage properties or wait for their turn to end.`);
+        return; // Prevent rolling again unless allowed
+    }
+
+    hasRolled = true; // Mark that the player has rolled
+    updateRollButtonState(); // Update the roll button state
+    // clearTimeout(rollTimer); 
     const dice1 = document.getElementById('dice1');
     const dice2 = document.getElementById('dice2');
 
@@ -20,14 +29,75 @@ function rollDice() {
         dice1.parentElement.classList.remove('rolling');
         dice2.parentElement.classList.remove('rolling');
 
-        movePlayer(roll1 + roll2); // Moves the player based on the dice roll
+        console.log(`Player ${gameState.currentPlayer} rolled ${roll1} and ${roll2}.`);
+
+        if (gameState.players[gameState.currentPlayer].inJail) {
+            handleJailRoll(roll1, roll2);
+        } else {
+            handleRegularRoll(roll1, roll2);
+        }
     }, 1000);
+}
+
+function handleRegularRoll(roll1, roll2) {
+    const totalRoll = roll1 + roll2;
+    movePlayer(totalRoll); // Move the player based on the dice roll
+
+    if (roll1 === roll2) {
+        rollCount++;
+        console.log(`Player ${gameState.currentPlayer} rolled doubles! Roll count: ${rollCount}`);
+
+        if (rollCount === 3) {
+            console.log(`Player ${gameState.currentPlayer} rolled doubles three times in a row. Sent to Jail for speeding.`);
+            sendToJail(gameState.currentPlayer);
+            rollCount = 0; // Reset roll count
+            endTurn(); // End the turn
+        } else {
+            console.log(`Player ${gameState.currentPlayer} gets to roll again.`);
+            hasRolled = false; // Allow the player to roll again
+            updateRollButtonState(); // Update the roll button state
+            startRollTimer(); // Restart the timer for the next roll
+        }
+    } else {
+        rollCount = 0; // Reset roll count if no doubles
+        console.log(`Player ${gameState.currentPlayer} has finished rolling. They can now manage properties or wait for their turn to end.`);
+    }
+}
+
+function handleJailRoll(roll1, roll2) {
+    if (roll1 === roll2) {
+        console.log(`Player ${gameState.currentPlayer} rolled doubles and is released from Jail.`);
+        gameState.players[gameState.currentPlayer].inJail = false;
+        gameState.players[gameState.currentPlayer].jailTurns = 0;
+        movePlayer(roll1 + roll2); // Move the player based on the dice roll
+        hasRolled = false; // Allow the player to roll again if they rolled doubles
+    } else {
+        gameState.players[gameState.currentPlayer].jailTurns++;
+        console.log(`Player ${gameState.currentPlayer} did not roll doubles. Jail turn count: ${gameState.players[gameState.currentPlayer].jailTurns}`);
+
+        if (gameState.players[gameState.currentPlayer].jailTurns >= 3) {
+            console.log(`Player ${gameState.currentPlayer} has been in Jail for 3 turns. Paying $50 to get out.`);
+            payMoney(gameState.currentPlayer, 50);
+            gameState.players[gameState.currentPlayer].inJail = false;
+            gameState.players[gameState.currentPlayer].jailTurns = 0;
+            movePlayer(roll1 + roll2); // Move the player after paying to get out
+        }
+        endTurn(); // End the turn if no doubles
+    }
 }
 
 function startRollTimer() {
     clearTimeout(rollTimer); // Clear any existing timer
-    let timeLeft = 30; // Set the countdown time
+    let timeLeft = 20; // Set the countdown time
     const timerElement = document.getElementById('timer');
+
+    if (timerElement) {
+        timerElement.onclick = () => {
+            clearTimeout(rollTimer); // Clear the timer when the player clicks the timer
+            console.log(`Player ${gameState.currentPlayer} manually ended their turn.`);
+            endTurn();
+        };
+    }
 
     rollTimer = setInterval(() => {
         if (timeLeft > 0) {
@@ -35,7 +105,7 @@ function startRollTimer() {
             if (timerElement) timerElement.textContent = `Ends in: ${timeLeft}s`; // Update the timer display
         } else {
             clearInterval(rollTimer); // Clear the timer when it reaches 0
-            console.log(`Player ${gameState.currentPlayer} failed to roll the dice. Moving to the next player's turn.`);
+            console.log(`Player ${gameState.currentPlayer}'s turn has ended automatically.`);
             endTurn(); // Automatically end the turn
         }
     }, 1000);
@@ -75,44 +145,44 @@ const gameState = {
 // Property Data Model
 const propertyData = [
     { position: 0, name: "GO", type: "go" },
-    { position: 1, name: "Mediterranean Avenue", type: "property", price: 60, rent: 2, color: "brown", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 30, rentOneHouse: 10, rentTwoHouses: 30, rentThreeHouses: 90, rentHotel: 160 },
+    { position: 1, name: "Mediterranean Avenue", type: "property", price: 60, rent: 2, color: "brown", owner: null, mortgaged: false, houses: 0, hasHotel: false, houseCost: 50, hotelCost: 50, loanableAmount: 30, rentOneHouse: 10, rentTwoHouses: 30, rentThreeHouses: 90, rentHotel: 160 },
     { position: 2, name: "Community Chest", type: "community-chest" },
-    { position: 3, name: "Baltic Avenue", type: "property", price: 60, rent: 4, color: "brown", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 30, rentOneHouse: 20, rentTwoHouses: 60, rentThreeHouses: 180, rentHotel: 320 },
+    { position: 3, name: "Baltic Avenue", type: "property", price: 60, rent: 4, color: "brown", owner: null, mortgaged: false, houses: 0, hasHotel: false, houseCost: 50, hotelCost: 50, loanableAmount: 30, rentOneHouse: 20, rentTwoHouses: 60, rentThreeHouses: 180, rentHotel: 320 },
     { position: 4, name: "Income Tax", type: "tax", amount: 200 },
     { position: 5, name: "Reading Railroad", type: "railroad", price: 200, rent: 25, color: "railroad", owner: null, mortgaged: false, loanableAmount: 100 },
-    { position: 6, name: "Oriental Avenue", type: "property", price: 100, rent: 6, color: "light-blue", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 50, rentOneHouse: 30, rentTwoHouses: 90, rentThreeHouses: 270, rentHotel: 400 },
+    { position: 6, name: "Oriental Avenue", type: "property", price: 100, rent: 6, color: "light-blue", owner: null, mortgaged: false, houses: 0, hasHotel: false, houseCost: 50, hotelCost: 50, loanableAmount: 50, rentOneHouse: 30, rentTwoHouses: 90, rentThreeHouses: 270, rentHotel: 400 },
     { position: 7, name: "Chance", type: "chance" },
-    { position: 8, name: "Vermont Avenue", type: "property", price: 100, rent: 6, color: "light-blue", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 50, rentOneHouse: 30, rentTwoHouses: 90, rentThreeHouses: 270, rentHotel: 400 },
-    { position: 9, name: "Connecticut Avenue", type: "property", price: 120, rent: 8, color: "light-blue", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 60, rentOneHouse: 40, rentTwoHouses: 100, rentThreeHouses: 300, rentHotel: 450 },
+    { position: 8, name: "Vermont Avenue", type: "property", price: 100, rent: 6, color: "light-blue", owner: null, mortgaged: false, houses: 0, hasHotel: false, houseCost: 50, hotelCost: 50, loanableAmount: 50, rentOneHouse: 30, rentTwoHouses: 90, rentThreeHouses: 270, rentHotel: 400 },
+    { position: 9, name: "Connecticut Avenue", type: "property", price: 120, rent: 8, color: "light-blue", owner: null, mortgaged: false, houses: 0, hasHotel: false, houseCost: 50, hotelCost: 50, loanableAmount: 60, rentOneHouse: 40, rentTwoHouses: 100, rentThreeHouses: 300, rentHotel: 450 },
     { position: 10, name: "Jail", type: "jail" },
-    { position: 11, name: "St. Charles Place", type: "property", price: 140, rent: 10, color: "pink", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 70, rentOneHouse: 50, rentTwoHouses: 150, rentThreeHouses: 450, rentHotel: 625 },
+    { position: 11, name: "St. Charles Place", type: "property", price: 140, rent: 10, color: "pink", owner: null, mortgaged: false, houses: 0, hasHotel: false, houseCost: 100, hotelCost: 100, loanableAmount: 70, rentOneHouse: 50, rentTwoHouses: 150, rentThreeHouses: 450, rentHotel: 625 },
     { position: 12, name: "Electric Company", type: "utility", price: 150, rent: 4, color: "utility", owner: null, mortgaged: false, loanableAmount: 75 },
-    { position: 13, name: "States Avenue", type: "property", price: 140, rent: 10, color: "pink", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 70, rentOneHouse: 50, rentTwoHouses: 150, rentThreeHouses: 450, rentHotel: 625 },
-    { position: 14, name: "Virginia Avenue", type: "property", price: 160, rent: 12, color: "pink", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 80, rentOneHouse: 60, rentTwoHouses: 180, rentThreeHouses: 500, rentHotel: 700 },
+    { position: 13, name: "States Avenue", type: "property", price: 140, rent: 10, color: "pink", owner: null, mortgaged: false, houses: 0, hasHotel: false, houseCost: 100, hotelCost: 100, loanableAmount: 70, rentOneHouse: 50, rentTwoHouses: 150, rentThreeHouses: 450, rentHotel: 625 },
+    { position: 14, name: "Virginia Avenue", type: "property", price: 160, rent: 12, color: "pink", owner: null, mortgaged: false, houses: 0, hasHotel: false, houseCost: 100, hotelCost: 100, loanableAmount: 80, rentOneHouse: 60, rentTwoHouses: 180, rentThreeHouses: 500, rentHotel: 700 },
     { position: 15, name: "Pennsylvania Railroad", type: "railroad", price: 200, rent: 25, color: "railroad", owner: null, mortgaged: false, loanableAmount: 100 },
-    { position: 16, name: "St. James Place", type: "property", price: 180, rent: 14, color: "orange", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 90, rentOneHouse: 70, rentTwoHouses: 200, rentThreeHouses: 550, rentHotel: 750 },
+    { position: 16, name: "St. James Place", type: "property", price: 180, rent: 14, color: "orange", owner: null, mortgaged: false, houses: 0, hasHotel: false, houseCost: 100, hotelCost: 100, loanableAmount: 90, rentOneHouse: 70, rentTwoHouses: 200, rentThreeHouses: 550, rentHotel: 750 },
     { position: 17, name: "Community Chest", type: "community-chest" },
-    { position: 18, name: "Tennessee Avenue", type: "property", price: 180, rent: 14, color: "orange", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 90, rentOneHouse: 70, rentTwoHouses: 200, rentThreeHouses: 550, rentHotel: 750 },
-    { position: 19, name: "New York Avenue", type: "property", price: 200, rent: 16, color: "orange", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 100, rentOneHouse: 80, rentTwoHouses: 220, rentThreeHouses: 600, rentHotel: 800 },
+    { position: 18, name: "Tennessee Avenue", type: "property", price: 180, rent: 14, color: "orange", owner: null, mortgaged: false, houses: 0, hasHotel: false, houseCost: 100, hotelCost: 100, loanableAmount: 90, rentOneHouse: 70, rentTwoHouses: 200, rentThreeHouses: 550, rentHotel: 750 },
+    { position: 19, name: "New York Avenue", type: "property", price: 200, rent: 16, color: "orange", owner: null, mortgaged: false, houses: 0, hasHotel: false, houseCost: 100, hotelCost: 100, loanableAmount: 100, rentOneHouse: 80, rentTwoHouses: 220, rentThreeHouses: 600, rentHotel: 800 },
     { position: 20, name: "Free Parking", type: "free-parking" },
-    { position: 21, name: "Kentucky Avenue", type: "property", price: 220, rent: 18, color: "red", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 110, rentOneHouse: 90, rentTwoHouses: 250, rentThreeHouses: 700, rentHotel: 875 },
+    { position: 21, name: "Kentucky Avenue", type: "property", price: 220, rent: 18, color: "red", owner: null, mortgaged: false, houses: 0, hasHotel: false, houseCost: 150, hotelCost: 150, loanableAmount: 110, rentOneHouse: 90, rentTwoHouses: 250, rentThreeHouses: 700, rentHotel: 875 },
     { position: 22, name: "Chance", type: "chance" },
-    { position: 23, name: "Indiana Avenue", type: "property", price: 220, rent: 18, color: "red", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 110, rentOneHouse: 90, rentTwoHouses: 250, rentThreeHouses: 700, rentHotel: 875 },
-    { position: 24, name: "Illinois Avenue", type: "property", price: 240, rent: 20, color: "red", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 120, rentOneHouse: 100, rentTwoHouses: 300, rentThreeHouses: 750, rentHotel: 925 },
+    { position: 23, name: "Indiana Avenue", type: "property", price: 220, rent: 18, color: "red", owner: null, mortgaged: false, houses: 0, hasHotel: false, houseCost: 150, hotelCost: 150, loanableAmount: 110, rentOneHouse: 90, rentTwoHouses: 250, rentThreeHouses: 700, rentHotel: 875 },
+    { position: 24, name: "Illinois Avenue", type: "property", price: 240, rent: 20, color: "red", owner: null, mortgaged: false, houses: 0, hasHotel: false, houseCost: 150, hotelCost: 150, loanableAmount: 120, rentOneHouse: 100, rentTwoHouses: 300, rentThreeHouses: 750, rentHotel: 925 },
     { position: 25, name: "B. & O. Railroad", type: "railroad", price: 200, rent: 25, color: "railroad", owner: null, mortgaged: false, loanableAmount: 100 },
-    { position: 26, name: "Atlantic Avenue", type: "property", price: 260, rent: 22, color: "yellow", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 130, rentOneHouse: 110, rentTwoHouses: 330, rentThreeHouses: 800, rentHotel: 975 },
-    { position: 27, name: "Ventnor Avenue", type: "property", price: 260, rent: 22, color: "yellow", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 130, rentOneHouse: 110, rentTwoHouses: 330, rentThreeHouses: 800, rentHotel: 975 },
+    { position: 26, name: "Atlantic Avenue", type: "property", price: 260, rent: 22, color: "yellow", owner: null, mortgaged: false, houses: 0, hasHotel: false, houseCost: 150, hotelCost: 150, loanableAmount: 130, rentOneHouse: 110, rentTwoHouses: 330, rentThreeHouses: 800, rentHotel: 975 },
+    { position: 27, name: "Ventnor Avenue", type: "property", price: 260, rent: 22, color: "yellow", owner: null, mortgaged: false, houses: 0, hasHotel: false, houseCost: 150, hotelCost: 150, loanableAmount: 130, rentOneHouse: 110, rentTwoHouses: 330, rentThreeHouses: 800, rentHotel: 975 },
     { position: 28, name: "Water Works", type: "utility", price: 150, rent: 4, color: "utility", owner: null, mortgaged: false, loanableAmount: 75 },
-    { position: 29, name: "Marvin Gardens", type: "property", price: 280, rent: 24, color: "yellow", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 140, rentOneHouse: 120, rentTwoHouses: 360, rentThreeHouses: 850, rentHotel: 1025 },
+    { position: 29, name: "Marvin Gardens", type: "property", price: 280, rent: 24, color: "yellow", owner: null, mortgaged: false, houses: 0, hasHotel: false, houseCost: 150, hotelCost: 150, loanableAmount: 140, rentOneHouse: 120, rentTwoHouses: 360, rentThreeHouses: 850, rentHotel: 1025 },
     { position: 30, name: "Go To Jail", type: "go-to-jail" },
-    { position: 31, name: "Pacific Avenue", type: "property", price: 300, rent: 26, color: "green", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 150, rentOneHouse: 130, rentTwoHouses: 390, rentThreeHouses: 900, rentHotel: 1100 },
-    { position: 32, name: "North Carolina Avenue", type: "property", price: 300, rent: 26, color: "green", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 150, rentOneHouse: 130, rentTwoHouses: 390, rentThreeHouses: 900, rentHotel: 1100 },
+    { position: 31, name: "Pacific Avenue", type: "property", price: 300, rent: 26, color: "green", owner: null, mortgaged: false, houses: 0, hasHotel: false, houseCost: 200, hotelCost: 200, loanableAmount: 150, rentOneHouse: 130, rentTwoHouses: 390, rentThreeHouses: 900, rentHotel: 1100 },
+    { position: 32, name: "North Carolina Avenue", type: "property", price: 300, rent: 26, color: "green", owner: null, mortgaged: false, houses: 0, hasHotel: false, houseCost: 200, hotelCost: 200, loanableAmount: 150, rentOneHouse: 130, rentTwoHouses: 390, rentThreeHouses: 900, rentHotel: 1100 },
     { position: 33, name: "Community Chest", type: "community-chest" },
-    { position: 34, name: "Pennsylvania Avenue", type: "property", price: 320, rent: 28, color: "green", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 160, rentOneHouse: 150, rentTwoHouses: 450, rentThreeHouses: 1000, rentHotel: 1200 },
+    { position: 34, name: "Pennsylvania Avenue", type: "property", price: 320, rent: 28, color: "green", owner: null, mortgaged: false, houses: 0, hasHotel: false, houseCost: 200, hotelCost: 200, loanableAmount: 160, rentOneHouse: 150, rentTwoHouses: 450, rentThreeHouses: 1000, rentHotel: 1200 },
     { position: 35, name: "Short Line", type: "railroad", price: 200, rent: 25, color: "railroad", owner: null, mortgaged: false, loanableAmount: 100 },
-    { position: 36, name: "Park Place", type: "property", price: 350, rent: 35, color: "blue", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 175, rentOneHouse: 175, rentTwoHouses: 500, rentThreeHouses: 1100, rentHotel: 1300 },
+    { position: 36, name: "Park Place", type: "property", price: 350, rent: 35, color: "blue", owner: null, mortgaged: false, houses: 0, hasHotel: false, houseCost: 200, hotelCost: 200, loanableAmount: 175, rentOneHouse: 175, rentTwoHouses: 500, rentThreeHouses: 1100, rentHotel: 1300 },
     { position: 37, name: "Luxury Tax", type: "tax", amount: 100 },
-    { position: 38, name: "Boardwalk", type: "property", price: 400, rent: 50, color: "blue", owner: null, mortgaged: false, houses: 0, hotel: false, loanableAmount: 200, rentOneHouse: 200, rentTwoHouses: 600, rentThreeHouses: 1400, rentHotel: 1700 },
+    { position: 38, name: "Boardwalk", type: "property", price: 400, rent: 50, color: "blue", owner: null, mortgaged: false, houses: 0, hasHotel: false, houseCost: 200, hotelCost: 200, loanableAmount: 200, rentOneHouse: 200, rentTwoHouses: 600, rentThreeHouses: 1400, rentHotel: 1700 },
     { position: 39, name: "Chance", type: "chance" }
 ];
 
@@ -535,9 +605,6 @@ function checkSpaceEffect(position) {
         default:
             console.error(`Unhandled position: ${position}`);
     }
-
-    // End the turn after handling the space effect
-    endTurn();
 }
 
 function drawChanceCard(player) {
@@ -720,6 +787,9 @@ function showPurchaseDialog(position) {
         return;
     }
 
+    // Disable game controls while the dialog is active
+    disableGameControls();
+
     // Clear any existing dialog
     dialogArea.innerHTML = '';
 
@@ -732,7 +802,7 @@ function showPurchaseDialog(position) {
         <p>Rent: $${property.rent}</p>
         <button onclick="buyProperty(${position})">Buy</button>
         <button onclick="startAuction(${position})">Auction</button>
-        <p class="timer">Decide In: <span id="action-timer">30</span> seconds</p>
+        <p class="timer">Decide In: <span id="action-timer">60</span> seconds</p>
     `;
     dialogArea.appendChild(dialog);
 
@@ -740,13 +810,14 @@ function showPurchaseDialog(position) {
     startActionTimer(() => {
         console.log(`No action taken for property "${property.name}". Moving to the next player's turn.`);
         dialogArea.innerHTML = ''; // Clear the dialog
+        enableGameControls(); // Re-enable game controls
         endTurn(); // Automatically end the turn
     });
 }
 
 function startActionTimer(callback) {
     clearTimeout(actionTimer); // Clear any existing timer
-    let timeLeft = 30; // Set the countdown time
+    let timeLeft = 20; // Set the countdown time
     const timerElement = document.getElementById('action-timer');
 
     actionTimer = setInterval(() => {
@@ -777,19 +848,29 @@ function buyProperty(position) {
 
     if (gameState.players[player].money >= property.price) {
         property.owner = player;
-        addMoney(player, -property.price);
+        payMoney(player, property.price);
         updatePropertiesDisplay();
 
         console.log(`Property "${property.name}" purchased by Player ${player}`);
         alert(`Player ${player} purchased ${property.name} for $${property.price}.`);
 
-        // Remove the dialog and end the turn
+        // Remove the dialog
         const dialog = document.querySelector('.property-dialog');
         if (dialog) dialog.remove();
-        endTurn();
+
+        // Re-enable game controls
+        enableGameControls();
+
+        // Restart the roll timer only if the player is eligible to roll again
+        if (!hasRolled) {
+            startRollTimer();
+        } else {
+            updateRollButtonState(); // Ensure the roll button remains inactive
+        }
     } else {
         alert(`Player ${player} does not have enough money to buy "${property.name}".`);
     }
+    // Do not end the turn here
 }
 
 function startAuction(position) {
@@ -807,6 +888,9 @@ function startAuction(position) {
         console.error('Dialog area not found.');
         return;
     }
+
+    // Disable other features during the auction
+    disableGameControls();
 
     // Clear any existing dialog
     dialogArea.innerHTML = '';
@@ -941,6 +1025,9 @@ function endAuction(position) {
     // Clear auction state
     gameState.auction = null;
 
+    // Re-enable game controls after the auction
+    enableGameControls();
+
     // End the turn
     endTurn();
 }
@@ -974,6 +1061,27 @@ function updatePropertiesDisplay() {
 
                 // Ensure the 'mortgaged' class is removed if the property is unowned
                 space.classList.remove('mortgaged');
+            }
+
+            // Update building icons
+            let buildingIcons = space.querySelector('.building-icons');
+            if (!buildingIcons) {
+                buildingIcons = document.createElement('div');
+                buildingIcons.className = 'building-icons';
+                space.appendChild(buildingIcons);
+            }
+            buildingIcons.innerHTML = ''; // Clear existing icons
+
+            if (property.hasHotel) {
+                const hotelIcon = document.createElement('div');
+                hotelIcon.className = 'hotel-icon';
+                buildingIcons.appendChild(hotelIcon);
+            } else {
+                for (let i = 0; i < property.houses; i++) {
+                    const houseIcon = document.createElement('div');
+                    houseIcon.className = 'house-icon';
+                    buildingIcons.appendChild(houseIcon);
+                }
             }
         }
     });
@@ -1070,6 +1178,9 @@ function sendToJail(player) {
 // Turn Management
 function endTurn() {
     console.log(`Ending Player ${gameState.currentPlayer}'s turn.`);
+    hasRolled = false; // Reset the roll status for the next player
+    rollCount = 0; // Reset the roll count
+    updateRollButtonState(); // Update the roll button state
 
     // Find the next active player
     do {
@@ -1141,11 +1252,19 @@ function getPlayerColor(player) {
     }
 }
 
+// Add the missing `updateRollButtonState` function
+function updateRollButtonState() {
+    const rollButton = document.querySelector('.control-panel button');
+    if (rollButton) {
+        rollButton.disabled = hasRolled; // Disable the button if the player has rolled
+    }
+}
+
 // Initialize the game
-initGame();
-updateFundsDisplay();
-updateTurnDisplay();
-startRollTimer();
+// initGame();
+// updateFundsDisplay();
+// updateTurnDisplay();
+// startRollTimer();
 
 function handleBankruptcy(player) {
     console.log(`Player ${player} is bankrupt!`);
@@ -1201,6 +1320,8 @@ function manageProperties() {
                     <button onclick="toggleMortgageProperty(${property.position})">
                         ${property.mortgaged ? 'Unmortgage' : 'Mortgage'}
                     </button>
+                    <button onclick="buildHouse(${property.position})">Build House</button>
+                    <button onclick="sellHouse(${property.position})">Sell House</button>
                     <button onclick="offerProperty(${property.position})">Offer to Player</button>
                 </li>
             `).join('')}
@@ -1227,6 +1348,11 @@ function toggleMortgageProperty(position) {
         return;
     }
 
+    if (property.houses > 0 || property.hasHotel) {
+        alert('You cannot mortgage a property with buildings on it.');
+        return;
+    }
+
     if (property.mortgaged) {
         const unmortgageCost = Math.ceil(property.loanableAmount * 1.1); // 10% interest
         if (gameState.players[gameState.currentPlayer].money < unmortgageCost) {
@@ -1243,8 +1369,92 @@ function toggleMortgageProperty(position) {
         alert(`${property.name} has been mortgaged for $${property.loanableAmount}.`);
     }
 
-    updatePropertiesDisplay(); // Update the UI to reflect the changes
-    manageProperties(); // Refresh the property management dialog
+    updatePropertiesDisplay();
+    manageProperties();
+}
+
+function buildHouse(position) {
+    const property = propertyData.find(p => p.position === position);
+    if (!property || property.owner !== gameState.currentPlayer) {
+        alert('You can only build houses on properties you own.');
+        return;
+    }
+
+    if (property.mortgaged) {
+        alert('You cannot build houses on a mortgaged property.');
+        return;
+    }
+
+    const colorGroup = propertyData.filter(p => p.color === property.color && p.type === 'property');
+    const ownsAllGroup = colorGroup.every(p => p.owner === gameState.currentPlayer);
+
+    if (!ownsAllGroup) {
+        alert('You must own all properties in the color group to build houses.');
+        return;
+    }
+
+    const minHouses = Math.min(...colorGroup.map(p => p.houses));
+    if (property.houses > minHouses) {
+        alert('You must build evenly across all properties in the color group.');
+        return;
+    }
+
+    if (property.houses === 4) {
+        if (property.hasHotel) {
+            alert('This property already has a hotel.');
+            return;
+        }
+
+        const hotelCost = property.hotelCost;
+        if (gameState.players[gameState.currentPlayer].money < hotelCost) {
+            alert(`You do not have enough money to build a hotel on ${property.name}. It costs $${hotelCost}.`);
+            return;
+        }
+
+        property.houses = 0;
+        property.hasHotel = true;
+        payMoney(gameState.currentPlayer, hotelCost);
+        alert(`A hotel has been built on ${property.name} for $${hotelCost}.`);
+    } else {
+        const houseCost = property.houseCost;
+        if (gameState.players[gameState.currentPlayer].money < houseCost) {
+            alert(`You do not have enough money to build a house on ${property.name}. It costs $${houseCost}.`);
+            return;
+        }
+
+        property.houses++;
+        payMoney(gameState.currentPlayer, houseCost);
+        alert(`A house has been built on ${property.name} for $${houseCost}.`);
+    }
+
+    updatePropertiesDisplay();
+    manageProperties();
+    // Do not end the turn here
+}
+
+function sellHouse(position) {
+    const property = propertyData.find(p => p.position === position);
+    if (!property || property.owner !== gameState.currentPlayer) {
+        alert('You can only sell houses on properties you own.');
+        return;
+    }
+
+    if (property.hasHotel) {
+        property.hasHotel = false;
+        property.houses = 4;
+        addMoney(gameState.currentPlayer, property.hotelCost / 2);
+        alert(`The hotel on ${property.name} has been sold for $${property.hotelCost / 2}.`);
+    } else if (property.houses > 0) {
+        property.houses--;
+        addMoney(gameState.currentPlayer, property.houseCost / 2);
+        alert(`A house on ${property.name} has been sold for $${property.houseCost / 2}.`);
+    } else {
+        alert('There are no houses or hotels to sell on this property.');
+        return;
+    }
+
+    updatePropertiesDisplay();
+    manageProperties();
 }
 
 function offerProperty(position) {
@@ -1252,6 +1462,16 @@ function offerProperty(position) {
     if (!property || property.owner !== gameState.currentPlayer) {
         alert('You can only offer properties you own.');
         return;
+    }
+
+    // Check if the property is part of a color group with buildings
+    if (property.type === 'property') {
+        const colorGroup = propertyData.filter(p => p.color === property.color && p.type === 'property');
+        const hasBuildings = colorGroup.some(p => p.houses > 0 || p.hasHotel);
+        if (hasBuildings) {
+            alert('You cannot sell this property because there are buildings on properties in this color group.');
+            return;
+        }
     }
 
     const price = prompt(`Enter the price to offer ${property.name}:`);
@@ -1349,5 +1569,51 @@ function closeDialog() {
     if (dialogArea) {
         dialogArea.innerHTML = ''; // Clear the dialog
     }
+
+    // Re-enable game controls when the dialog is closed
+    enableGameControls();
 }
+
+function disableGameControls() {
+    // Disable the "Roll" button
+    const rollButton = document.querySelector('.control-panel button[onclick="rollDice()"]');
+    if (rollButton) rollButton.disabled = true;
+
+    // Disable the "Manage Properties" button
+    const managePropertiesButton = document.querySelector('.control-panel button[onclick="manageProperties()"]');
+    if (managePropertiesButton) managePropertiesButton.disabled = true;
+
+    // Disable the "End Turn" button
+    const endTurnButton = document.getElementById('end-turn-button');
+    if (endTurnButton) {
+        endTurnButton.disabled = true;
+        // endTurnButton.onclick = null; 
+    }
+
+    // Pause the roll timer
+    clearTimeout(rollTimer);
+}
+
+function enableGameControls() {
+    // Enable the "Roll" button
+    const rollButton = document.querySelector('.control-panel button[onclick="rollDice()"]');
+    if (rollButton) rollButton.disabled = false;
+
+    // Enable the "Manage Properties" button
+    const managePropertiesButton = document.querySelector('.control-panel button[onclick="manageProperties()"]');
+    if (managePropertiesButton) managePropertiesButton.disabled = false;
+
+    // Enable the "End Turn" button
+    const endTurnButton = document.getElementById('end-turn-button');
+    if (endTurnButton) endTurnButton.disabled = false;
+
+    // Restart the roll timer
+    startRollTimer();
+}
+
+// Initialize the game and add the "End Turn" button
+initGame();
+updateFundsDisplay();
+updateTurnDisplay();
+startRollTimer();
 

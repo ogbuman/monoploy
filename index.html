@@ -90,15 +90,13 @@
     <div class="control-panel">
         <button onclick="rollDice()">🎲 Roll Dice</button>   
         <button onclick="manageProperties()">Manage Properties</button> <!-- Add this button -->
+        <button  onclick="endTurn()" id="end-turn-button" >End Turn</button>
         
         <div id="turn-display" style="text-align: center; font-size: 18px; margin-top: 10px;">
             Player 1's Turn
         </div>
-
-        <!-- Timer Area -->
-        <div class="timer-area">
-            <div class="timer" id="timer">Ends in: 30s</div>
-        </div>
+        <span class="timer" id="timer">60s</span>
+     
 
         <div class="player-funds" id="player1-funds">Player 1: $1500</div>
         <div class="player-funds" id="player2-funds">Player 2: $1500</div>
