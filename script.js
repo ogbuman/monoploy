@@ -957,9 +957,15 @@ function updatePropertiesDisplay() {
             }
 
             if (property.owner) {
-                ownershipMarker.style.backgroundColor = getPlayerColor(property.owner);
+                ownershipMarker.style.backgroundColor = property.mortgaged ? getPlayerColor(property.owner) : getPlayerColor(property.owner);
+                ownershipMarker.textContent = property.mortgaged ? 'Mortgaged' : '';
+                ownershipMarker.style.color = property.mortgaged ? 'red' : 'transparent';
+                
+                ownershipMarker.onclick = property.mortgaged ? () => unmortgageProperty(property.position) : null;
             } else {
                 ownershipMarker.style.backgroundColor = 'transparent';
+                ownershipMarker.textContent = '';
+                ownershipMarker.onclick = null;
             }
         }
     });
@@ -983,8 +989,10 @@ function payRent(position) {
     const property = propertyData.find(p => p.position === position);
     const currentPlayer = gameState.currentPlayer;
 
-    if (!property || !property.owner || property.owner === currentPlayer) {
-        console.error(`Invalid property or no rent to pay for position ${position}.`);
+    if (!property || !property.owner || property.owner === currentPlayer || property.mortgaged) {
+        if (property.mortgaged) {
+            console.log(`Player ${currentPlayer} landed on "${property.name}", but it is mortgaged. No rent is paid.`);
+        }
         return;
     }
 
@@ -999,6 +1007,48 @@ function payRent(position) {
         console.log(`Player ${currentPlayer} cannot afford the rent of $${rent}.`);
         handleBankruptcy(currentPlayer);
     }
+}
+
+function mortgageProperty(position) {
+    const property = propertyData.find(p => p.position === position);
+    if (!property || property.owner !== gameState.currentPlayer) {
+        alert('You can only mortgage properties you own.');
+        return;
+    }
+
+    if (property.mortgaged) {
+        alert(`${property.name} is already mortgaged.`);
+        return;
+    }
+
+    property.mortgaged = true;
+    addMoney(gameState.currentPlayer, property.loanableAmount);
+    alert(`${property.name} has been mortgaged for $${property.loanableAmount}.`);
+    updatePropertiesDisplay();
+}
+
+function unmortgageProperty(position) {
+    const property = propertyData.find(p => p.position === position);
+    if (!property || property.owner !== gameState.currentPlayer) {
+        alert('You can only unmortgage properties you own.');
+        return;
+    }
+
+    if (!property.mortgaged) {
+        alert(`${property.name} is not mortgaged.`);
+        return;
+    }
+
+    const unmortgageCost = Math.ceil(property.loanableAmount * 1.1); // 10% interest
+    if (gameState.players[gameState.currentPlayer].money < unmortgageCost) {
+        alert(`You do not have enough money to unmortgage ${property.name}. It costs $${unmortgageCost}.`);
+        return;
+    }
+
+    property.mortgaged = false;
+    payMoney(gameState.currentPlayer, unmortgageCost);
+    alert(`${property.name} has been unmortgaged for $${unmortgageCost}.`);
+    updatePropertiesDisplay();
 }
 
 // Jail System
@@ -1081,9 +1131,6 @@ function getPlayerColor(player) {
             return 'transparent';
     }
 }
-
-
-
 
 // Initialize the game
 initGame();
@@ -1177,6 +1224,30 @@ function mortgageProperty(position) {
     property.mortgaged = true;
     addMoney(gameState.currentPlayer, property.loanableAmount);
     alert(`${property.name} has been mortgaged for $${property.loanableAmount}.`);
+    updatePropertiesDisplay();
+}
+
+function unmortgageProperty(position) {
+    const property = propertyData.find(p => p.position === position);
+    if (!property || property.owner !== gameState.currentPlayer) {
+        alert('You can only unmortgage properties you own.');
+        return;
+    }
+
+    if (!property.mortgaged) {
+        alert(`${property.name} is not mortgaged.`);
+        return;
+    }
+
+    const unmortgageCost = Math.ceil(property.loanableAmount * 1.1); // 10% interest
+    if (gameState.players[gameState.currentPlayer].money < unmortgageCost) {
+        alert(`You do not have enough money to unmortgage ${property.name}. It costs $${unmortgageCost}.`);
+        return;
+    }
+
+    property.mortgaged = false;
+    payMoney(gameState.currentPlayer, unmortgageCost);
+    alert(`${property.name} has been unmortgaged for $${unmortgageCost}.`);
     updatePropertiesDisplay();
 }
 
