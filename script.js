@@ -957,15 +957,23 @@ function updatePropertiesDisplay() {
             }
 
             if (property.owner) {
-                ownershipMarker.style.backgroundColor = property.mortgaged ? getPlayerColor(property.owner) : getPlayerColor(property.owner);
-                ownershipMarker.textContent = property.mortgaged ? 'Mortgaged' : '';
-                ownershipMarker.style.color = property.mortgaged ? 'red' : 'transparent';
-                
+                ownershipMarker.style.backgroundColor = getPlayerColor(property.owner);
+              
+                // Add or remove the 'mortgaged' class based on the property's state
+                if (property.mortgaged) {
+                    space.classList.add('mortgaged');
+                } else {
+                    space.classList.remove('mortgaged');
+                }
+
                 ownershipMarker.onclick = property.mortgaged ? () => unmortgageProperty(property.position) : null;
             } else {
                 ownershipMarker.style.backgroundColor = 'transparent';
                 ownershipMarker.textContent = '';
                 ownershipMarker.onclick = null;
+
+                // Ensure the 'mortgaged' class is removed if the property is unowned
+                space.classList.remove('mortgaged');
             }
         }
     });
@@ -973,11 +981,12 @@ function updatePropertiesDisplay() {
 
 // Money Management
 function addMoney(player, amount) {
-    gameState.players[player].money += amount;
+    gameState.players[player].money += Number(amount); // Ensure amount is a number
     updateFundsDisplay();
 }
 
 function payMoney(player, amount) {
+    amount = Number(amount); // Ensure amount is a number
     if(gameState.players[player].money >= amount) {
         addMoney(player, -amount);
     } else {
@@ -1189,7 +1198,9 @@ function manageProperties() {
             ${playerProperties.map(property => `
                 <li>
                     ${property.name} (${property.color})
-                    <button onclick="mortgageProperty(${property.position})">Mortgage</button>
+                    <button onclick="toggleMortgageProperty(${property.position})">
+                        ${property.mortgaged ? 'Unmortgage' : 'Mortgage'}
+                    </button>
                     <button onclick="offerProperty(${property.position})">Offer to Player</button>
                 </li>
             `).join('')}
@@ -1209,46 +1220,31 @@ function manageProperties() {
     dialogArea.appendChild(dialog);
 }
 
-function mortgageProperty(position) {
+function toggleMortgageProperty(position) {
     const property = propertyData.find(p => p.position === position);
     if (!property || property.owner !== gameState.currentPlayer) {
-        alert('You can only mortgage properties you own.');
+        alert('You can only manage properties you own.');
         return;
     }
 
     if (property.mortgaged) {
-        alert(`${property.name} is already mortgaged.`);
-        return;
+        const unmortgageCost = Math.ceil(property.loanableAmount * 1.1); // 10% interest
+        if (gameState.players[gameState.currentPlayer].money < unmortgageCost) {
+            alert(`You do not have enough money to unmortgage ${property.name}. It costs $${unmortgageCost}.`);
+            return;
+        }
+
+        property.mortgaged = false;
+        payMoney(gameState.currentPlayer, unmortgageCost);
+        alert(`${property.name} has been unmortgaged for $${unmortgageCost}.`);
+    } else {
+        property.mortgaged = true;
+        addMoney(gameState.currentPlayer, property.loanableAmount);
+        alert(`${property.name} has been mortgaged for $${property.loanableAmount}.`);
     }
 
-    property.mortgaged = true;
-    addMoney(gameState.currentPlayer, property.loanableAmount);
-    alert(`${property.name} has been mortgaged for $${property.loanableAmount}.`);
-    updatePropertiesDisplay();
-}
-
-function unmortgageProperty(position) {
-    const property = propertyData.find(p => p.position === position);
-    if (!property || property.owner !== gameState.currentPlayer) {
-        alert('You can only unmortgage properties you own.');
-        return;
-    }
-
-    if (!property.mortgaged) {
-        alert(`${property.name} is not mortgaged.`);
-        return;
-    }
-
-    const unmortgageCost = Math.ceil(property.loanableAmount * 1.1); // 10% interest
-    if (gameState.players[gameState.currentPlayer].money < unmortgageCost) {
-        alert(`You do not have enough money to unmortgage ${property.name}. It costs $${unmortgageCost}.`);
-        return;
-    }
-
-    property.mortgaged = false;
-    payMoney(gameState.currentPlayer, unmortgageCost);
-    alert(`${property.name} has been unmortgaged for $${unmortgageCost}.`);
-    updatePropertiesDisplay();
+    updatePropertiesDisplay(); // Update the UI to reflect the changes
+    manageProperties(); // Refresh the property management dialog
 }
 
 function offerProperty(position) {
@@ -1292,6 +1288,7 @@ function offerProperty(position) {
 }
 
 function sendOffer(position, player, price) {
+    price = Number(price); // Ensure price is a number
     const property = propertyData.find(p => p.position === position);
     if (!property) {
         alert('Invalid property.');
@@ -1317,9 +1314,9 @@ function sendOffer(position, player, price) {
 
 function makeOffer() {
     const propertyPosition = document.getElementById('offer-property').value;
-    const price = document.getElementById('offer-price').value;
+    const price = Number(document.getElementById('offer-price').value); // Ensure price is a number
 
-    if (!propertyPosition || !price || isNaN(price) || price <= 0) {
+    if (!propertyPosition || isNaN(price) || price <= 0) {
         alert('Invalid offer.');
         return;
     }
