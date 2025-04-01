@@ -86,9 +86,9 @@ function handleJailRoll(roll1, roll2) {
     }
 }
 
-function startRollTimer() {
+function startRollTimer(remainingTime = 20) {
     clearTimeout(rollTimer); // Clear any existing timer
-    let timeLeft = 20; // Set the countdown time
+    let timeLeft = remainingTime; // Use the provided remaining time
     const timerElement = document.getElementById('timer');
 
     if (timerElement) {
@@ -861,11 +861,9 @@ function buyProperty(position) {
         // Re-enable game controls
         enableGameControls();
 
-        // Restart the roll timer only if the player is eligible to roll again
-        if (!hasRolled) {
-            startRollTimer();
-        } else {
-            updateRollButtonState(); // Ensure the roll button remains inactive
+        // Ensure the timer resumes correctly
+        if (typeof timeLeft === 'undefined' || timeLeft <= 0) {
+            timeLeft = 20; // Reset the timer if undefined or expired
         }
     } else {
         alert(`Player ${player} does not have enough money to buy "${property.name}".`);
@@ -1028,8 +1026,8 @@ function endAuction(position) {
     // Re-enable game controls after the auction
     enableGameControls();
 
-    // End the turn
-    endTurn();
+  
+    // endTurn();
 }
 
 function updatePropertiesDisplay() {
@@ -1259,12 +1257,6 @@ function updateRollButtonState() {
         rollButton.disabled = hasRolled; // Disable the button if the player has rolled
     }
 }
-
-// Initialize the game
-// initGame();
-// updateFundsDisplay();
-// updateTurnDisplay();
-// startRollTimer();
 
 function handleBankruptcy(player) {
     console.log(`Player ${player} is bankrupt!`);
@@ -1597,7 +1589,10 @@ function disableGameControls() {
 function enableGameControls() {
     // Enable the "Roll" button
     const rollButton = document.querySelector('.control-panel button[onclick="rollDice()"]');
-    if (rollButton) rollButton.disabled = false;
+    if (rollButton) {
+        rollButton.disabled = hasRolled; // Disable the button if the player has already rolled
+        rollButton.classList.toggle('disabled', hasRolled); // Add or remove the 'disabled' class
+    }
 
     // Enable the "Manage Properties" button
     const managePropertiesButton = document.querySelector('.control-panel button[onclick="manageProperties()"]');
@@ -1607,8 +1602,14 @@ function enableGameControls() {
     const endTurnButton = document.getElementById('end-turn-button');
     if (endTurnButton) endTurnButton.disabled = false;
 
-    // Restart the roll timer
-    startRollTimer();
+    // Restart the roll timer with the remaining time
+    const timerElement = document.getElementById('timer');
+    let remainingTime = 20; // Default to 20 seconds if no timer element is found
+    if (timerElement && timerElement.textContent.includes('Ends in:')) {
+        const match = timerElement.textContent.match(/\d+/); // Extract the remaining time
+        if (match) remainingTime = parseInt(match[0], 10);
+    }
+    startRollTimer(remainingTime); // Pass the remaining time to the timer
 }
 
 // Initialize the game and add the "End Turn" button
