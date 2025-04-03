@@ -65,25 +65,44 @@ function handleRegularRoll(roll1, roll2) {
 }
 
 function handleJailRoll(roll1, roll2) {
+    const currentPlayer = gameState.players[gameState.currentPlayer];
+
     if (roll1 === roll2) {
         console.log(`Player ${gameState.currentPlayer} rolled doubles and is released from Jail.`);
-        gameState.players[gameState.currentPlayer].inJail = false;
-        gameState.players[gameState.currentPlayer].jailTurns = 0;
-        movePlayer(roll1 + roll2); // Move the player based on the dice roll
-        hasRolled = false; // Allow the player to roll again if they rolled doubles
-    } else {
-        gameState.players[gameState.currentPlayer].jailTurns++;
-        console.log(`Player ${gameState.currentPlayer} did not roll doubles. Jail turn count: ${gameState.players[gameState.currentPlayer].jailTurns}`);
+        currentPlayer.inJail = false;
+        currentPlayer.jailTurns = 0;
+        movePlayer(roll1 + roll2); // Move forward based on the dice roll
+        hasRolled = true; // End the turn after moving
 
-        if (gameState.players[gameState.currentPlayer].jailTurns >= 3) {
+        // Clear the Jail options dialog
+        const dialogArea = document.getElementById('dialog-area');
+        if (dialogArea) dialogArea.innerHTML = '';
+        enableGameControls()
+    } else {
+        currentPlayer.jailTurns++;
+        console.log(`Player ${gameState.currentPlayer} did not roll doubles. Jail turn count: ${currentPlayer.jailTurns}`);
+
+          // Clear the Jail options dialog
+          const dialogArea = document.getElementById('dialog-area');
+          if (dialogArea) dialogArea.innerHTML = '';
+          enableGameControls()
+
+
+        if (currentPlayer.jailTurns >= 3) {
             console.log(`Player ${gameState.currentPlayer} has been in Jail for 3 turns. Paying $50 to get out.`);
             payMoney(gameState.currentPlayer, 50);
-            gameState.players[gameState.currentPlayer].inJail = false;
-            gameState.players[gameState.currentPlayer].jailTurns = 0;
-            movePlayer(roll1 + roll2); // Move the player after paying to get out
+            currentPlayer.inJail = false;
+            currentPlayer.jailTurns = 0;
+            movePlayer(roll1 + roll2); // Move forward after paying the fine
+
+            // Clear the Jail options dialog
+            const dialogArea = document.getElementById('dialog-area');
+            if (dialogArea) dialogArea.innerHTML = '';
         }
-        endTurn(); // End the turn if no doubles
     }
+
+    enableGameControls(); // Re-enable game controls after the decision
+    // endTurn(); 
 }
 
 function startRollTimer(remainingTime = 20) {
@@ -623,8 +642,8 @@ function drawChanceCard(player) {
         console.log(`Player ${player} receives $${card.price}.`);
         addMoney(player, card.price); // Add money to the player
     } else if (card.price < 0) {
-        console.log(`Player ${player} pays $${Math.abs(card.price)}.`);
-        payMoney(player, Math.abs(card.price)); // Deduct money from the player
+        console.log(`Player ${player} needs to pay $${Math.abs(card.price)}.`);
+        payMoney(player, Math.abs(card.price)); // Use updated payMoney logic
     }
 
     if (card.position !== null) {
@@ -668,10 +687,14 @@ function drawChanceCard(player) {
         console.log(`Player ${player} pays $${amount} to each other player.`);
         for (let i = 1; i <= 4; i++) {
             if (i !== player) {
-                payMoney(player, amount);
+                payMoney(player, amount, i); // Pass the creditor (other players)
                 addMoney(i, amount);
             }
         }
+    }
+    if (card.name.includes("Go to Jail")) {
+        console.log(`Player ${player} is sent to Jail by a Chance card.`);
+        sendToJail(player); // Apply the Jail feature
     }
 
     if (card.name.includes("Collect from every player")) {
@@ -679,7 +702,7 @@ function drawChanceCard(player) {
         console.log(`Player ${player} collects $${amount} from each other player.`);
         for (let i = 1; i <= 4; i++) {
             if (i !== player) {
-                payMoney(i, amount);
+                payMoney(i, amount, player); // Pass the creditor (current player)
                 addMoney(player, amount);
             }
         }
@@ -702,8 +725,8 @@ function drawCommunityChestCard(player) {
         console.log(`Player ${player} receives $${card.price}.`);
         addMoney(player, card.price); // Add money to the player
     } else if (card.price < 0) {
-        console.log(`Player ${player} pays $${Math.abs(card.price)}.`);
-        payMoney(player, Math.abs(card.price)); // Deduct money from the player
+        console.log(`Player ${player} needs to pay $${Math.abs(card.price)}.`);
+        payMoney(player, Math.abs(card.price)); // Use updated payMoney logic
     }
 
     if (card.position !== null) {
@@ -717,12 +740,17 @@ function drawCommunityChestCard(player) {
         gameState.players[player].getOutOfJailFree = true; // Add a flag for the card
     }
 
+    if (card.name.includes("Go to Jail")) {
+        console.log(`Player ${player} is sent to Jail by a Community Chest card.`);
+        sendToJail(player); // Apply the Jail feature
+    }
+
     if (card.name.includes("Pay each player")) {
         const amount = Math.abs(card.price);
         console.log(`Player ${player} pays $${amount} to each other player.`);
         for (let i = 1; i <= 4; i++) {
             if (i !== player) {
-                payMoney(player, amount);
+                payMoney(player, amount, i); // Pass the creditor (other players)
                 addMoney(i, amount);
             }
         }
@@ -733,7 +761,7 @@ function drawCommunityChestCard(player) {
         console.log(`Player ${player} collects $${amount} from each other player.`);
         for (let i = 1; i <= 4; i++) {
             if (i !== player) {
-                payMoney(i, amount);
+                payMoney(i, amount, player); // Pass the creditor (current player)
                 addMoney(player, amount);
             }
         }
@@ -815,15 +843,15 @@ function showPurchaseDialog(position) {
     });
 }
 
-function startActionTimer(callback) {
+function startActionTimer(callback, timerId = 'action-timer') {
     clearTimeout(actionTimer); // Clear any existing timer
     let timeLeft = 20; // Set the countdown time
-    const timerElement = document.getElementById('action-timer');
+    const timerElement = document.getElementById(timerId);
 
     actionTimer = setInterval(() => {
         if (timeLeft > 0) {
             timeLeft--;
-            if (timerElement) timerElement.textContent = ` ${timeLeft}s`; // Update the timer display
+            if (timerElement) timerElement.textContent = timeLeft; // Update the timer display
         } else {
             clearInterval(actionTimer); // Clear the timer when it reaches 0
             callback(); // Execute the callback
@@ -832,7 +860,6 @@ function startActionTimer(callback) {
 }
 
 function buyProperty(position) {
-    clearTimeout(actionTimer); // Clear the timer since an action is taken
     const property = propertyData.find(p => p.position === position);
     const player = gameState.currentPlayer;
 
@@ -846,9 +873,18 @@ function buyProperty(position) {
         return;
     }
 
-    if (gameState.players[player].money >= property.price) {
+    console.log(`Player ${player} needs $${property.price} to buy ${property.name}.`);
+    payMoney(player, property.price); // Use updated payMoney logic
+
+    // Check if the player is bankrupt after attempting to pay
+    if (gameState.players[player].isBankrupt) {
+        console.log(`Player ${player} could not afford ${property.name} and is bankrupt. Starting auction.`);
+        startAuction(position); // Start auction for the property
+        return; // Exit the function to prevent assigning ownership
+    }
+
+    if (gameState.players[player].money >= 0 && !property.owner) {
         property.owner = player;
-        payMoney(player, property.price);
         updatePropertiesDisplay();
 
         console.log(`Property "${property.name}" purchased by Player ${player}`);
@@ -858,17 +894,8 @@ function buyProperty(position) {
         const dialog = document.querySelector('.property-dialog');
         if (dialog) dialog.remove();
 
-        // Re-enable game controls
-        enableGameControls();
-
-        // Ensure the timer resumes correctly
-        if (typeof timeLeft === 'undefined' || timeLeft <= 0) {
-            timeLeft = 20; // Reset the timer if undefined or expired
-        }
-    } else {
-        alert(`Player ${player} does not have enough money to buy "${property.name}".`);
+        enableGameControls(); // Re-enable game controls
     }
-    // Do not end the turn here
 }
 
 function startAuction(position) {
@@ -1006,18 +1033,23 @@ function endAuction(position) {
                 ownershipMarker = document.createElement('div');
                 ownershipMarker.className = 'ownership-marker';
                 space.appendChild(ownershipMarker);
-
-                
             }
-            console.log(winner)
-            ownershipMarker.style.backgroundColor = getPlayerColor(winner); 
-            console.log(getPlayerColor(winner))
+            ownershipMarker.style.backgroundColor = getPlayerColor(winner);
         }
 
         updatePropertiesDisplay(); // Ensure the correct color and ownership are applied
     } else {
         console.log('No bids were placed. The property remains unowned.');
         alert('No bids were placed. The property remains unowned.');
+
+        // Mark the property as unowned and unmortgage it
+        const property = propertyData.find(p => p.position === position);
+        if (property) {
+            property.owner = null;
+            property.mortgaged = false; // Ensure the property is not mortgaged
+        }
+
+        updatePropertiesDisplay(); // Update the UI to reflect the unowned state
     }
 
     // Clear auction state
@@ -1026,8 +1058,12 @@ function endAuction(position) {
     // Re-enable game controls after the auction
     enableGameControls();
 
-  
-    // endTurn();
+    // Trigger the auction end callback if it exists
+    if (gameState.auctionEndCallback) {
+        const callback = gameState.auctionEndCallback;
+        gameState.auctionEndCallback = null; // Clear the callback
+        callback(); // Execute the callback
+    }
 }
 
 function updatePropertiesDisplay() {
@@ -1091,13 +1127,137 @@ function addMoney(player, amount) {
     updateFundsDisplay();
 }
 
-function payMoney(player, amount) {
+function payMoney(player, amount, creditor = null) {
     amount = Number(amount); // Ensure amount is a number
-    if(gameState.players[player].money >= amount) {
-        addMoney(player, -amount);
-    } else {
-        handleBankruptcy(player);
+
+    if (isNaN(amount) || amount <= 0) {
+        console.error(`Invalid payment amount: ${amount}. Payment aborted.`);
+        return; // Exit the function if the amount is invalid
     }
+
+    if (gameState.players[player].money >= amount) {
+        addMoney(player, -amount);
+        if (creditor !== null) {
+            addMoney(creditor, amount);
+            console.log(`Player ${player} pays $${amount} to Player ${creditor}.`);
+        }
+    } else {
+        console.log(`Player ${player} only has $${gameState.players[player].money} and cannot afford to pay $${amount}. Attempting to raise funds...`);
+        if (attemptToRaiseFunds(player, amount)) {
+            console.log(`Player ${player} successfully raised enough funds to pay $${amount}.`);
+            payMoney(player, amount, creditor); // Retry payment after raising funds
+        } else {
+            console.log(`Player ${player} could not raise enough funds. Declaring bankruptcy.`);
+            handleBankruptcy(player);
+
+            // If the player is bankrupt, ensure their properties are auctioned
+            propertyData.forEach(property => {
+                if (property.owner === player) {
+                    property.owner = null; // Remove ownership
+                    startAuction(property.position); // Start auction for the property
+                }
+            });
+        }
+    }
+}
+
+function attemptToRaiseFunds(player, amountNeeded) {
+    const currentPlayer = gameState.players[player];
+
+    // Helper function to sell a hotel
+    const sellHotel = () => {
+        for (const property of propertyData) {
+            if (property.owner === player && property.hasHotel) {
+                const hotelValue = property.hotelCost / 2;
+                console.log(`Selling hotel on ${property.name} for $${hotelValue}.`);
+                property.hasHotel = false;
+                property.houses = 4; // Convert hotel back to 4 houses
+                addMoney(player, hotelValue);
+                return true;
+            }
+        }
+        return false;
+    };
+
+    // Helper function to sell a house
+    const sellHouse = () => {
+        const colorGroups = propertyData.reduce((groups, property) => {
+            if (property.owner === player && property.houses > 0) {
+                if (!groups[property.color]) groups[property.color] = [];
+                groups[property.color].push(property);
+            }
+            return groups;
+        }, {});
+
+        for (const group of Object.values(colorGroups)) {
+            const maxHouses = Math.max(...group.map(p => p.houses));
+            for (const property of group) {
+                if (property.houses === maxHouses) {
+                    const houseValue = property.houseCost / 2;
+                    console.log(`Selling house on ${property.name} for $${houseValue}.`);
+                    property.houses--;
+                    addMoney(player, houseValue);
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
+
+    // Helper function to mortgage a property
+    const mortgageProperty = () => {
+        for (const property of propertyData) {
+            if (property.owner === player && !property.mortgaged && property.houses === 0 && !property.hasHotel) {
+                console.log(`Mortgaging ${property.name} for $${property.loanableAmount}.`);
+                property.mortgaged = true;
+                addMoney(player, property.loanableAmount);
+                updatePropertiesDisplay(); // Update the UI to reflect the mortgaged state
+                return true;
+            }
+        }
+        return false;
+    };
+
+    // Attempt to raise funds until the player has enough money or no more assets
+    while (currentPlayer.money < amountNeeded) {
+        if (sellHotel()) continue;
+        if (sellHouse()) continue;
+        if (mortgageProperty()) continue;
+
+        // If no more assets can be converted to money, return false
+        return false;
+    }
+
+    // If enough funds are raised, return true
+    return true;
+}
+
+function calculateRent(property) {
+    if (!property) return 0;
+
+    // Check if the property is part of a color group
+    if (property.type === "property") {
+        const colorGroup = propertyData.filter(p => p.color === property.color && p.type === "property");
+        const owner = property.owner;
+
+        // Check if the owner owns all properties in the color group
+        const ownsAllGroup = colorGroup.every(p => p.owner === owner);
+
+        if (ownsAllGroup && property.houses === 0 && !property.hasHotel) {
+            // Double rent for unimproved properties in a complete color group
+            return property.rent * 2;
+        }
+    }
+
+    // Calculate rent based on houses or hotel
+    if (property.houses === 1) return property.rentOneHouse;
+    if (property.houses === 2) return property.rentTwoHouses;
+    if (property.houses === 3) return property.rentThreeHouses;
+    if (property.houses === 4) return property.rentFourHouses; // Ensure rent for 4 houses is handled
+    if (property.hasHotel) return property.rentHotel; // Properly calculate rent for hotels
+
+    // Default rent for unimproved properties
+    return property.rent;
 }
 
 function payRent(position) {
@@ -1111,23 +1271,28 @@ function payRent(position) {
         return;
     }
 
-    const rent = property.rent;
+    // Ensure the owner is not bankrupt
+    if (gameState.players[property.owner].isBankrupt) {
+        console.log(`Player ${currentPlayer} landed on "${property.name}", but the owner (Player ${property.owner}) is bankrupt. No rent is paid.`);
+        return;
+    }
+
+    const rent = calculateRent(property);
     const owner = property.owner;
 
-    if (gameState.players[currentPlayer].money >= rent) {
-        console.log(`Player ${currentPlayer} pays $${rent} in rent to Player ${owner}.`);
-        payMoney(currentPlayer, rent);
-        addMoney(owner, rent);
-    } else {
-        console.log(`Player ${currentPlayer} cannot afford the rent of $${rent}.`);
-        handleBankruptcy(currentPlayer);
-    }
+    console.log(`Player ${currentPlayer} owes $${rent} in rent to Player ${owner}.`);
+    payMoney(currentPlayer, rent, owner); // Use updated payMoney logic
 }
 
 function mortgageProperty(position) {
     const property = propertyData.find(p => p.position === position);
     if (!property || property.owner !== gameState.currentPlayer) {
         alert('You can only mortgage properties you own.');
+        return;
+    }
+
+    if (property.houses > 0 || property.hasHotel) {
+        alert('You must sell all buildings on this property before mortgaging it.');
         return;
     }
 
@@ -1166,11 +1331,135 @@ function unmortgageProperty(position) {
     updatePropertiesDisplay();
 }
 
+function handleMortgagedPropertyPurchase(position, buyer) {
+    const property = propertyData.find(p => p.position === position);
+    if (!property || !property.mortgaged) {
+        alert('This property is not mortgaged.');
+        return;
+    }
+
+    const interest = Math.ceil(property.loanableAmount * 0.1); // 10% interest
+    const totalCost = property.loanableAmount + interest;
+
+    const liftMortgage = confirm(`This property is mortgaged. Do you want to lift the mortgage immediately? It will cost $${totalCost}.`);
+
+    if (liftMortgage) {
+        if (gameState.players[buyer].money >= totalCost) {
+            payMoney(buyer, totalCost);
+            property.mortgaged = false;
+            alert(`${property.name} has been unmortgaged by Player ${buyer}.`);
+        } else {
+            alert(`Player ${buyer} does not have enough money to lift the mortgage.`);
+        }
+    } else {
+        if (gameState.players[buyer].money >= interest) {
+            payMoney(buyer, interest);
+            alert(`Player ${buyer} has paid the interest of $${interest}. The property remains mortgaged.`);
+        } else {
+            alert(`Player ${buyer} does not have enough money to pay the interest.`);
+        }
+    }
+
+    property.owner = buyer;
+    updatePropertiesDisplay();
+}
+
 // Jail System
 function sendToJail(player) {
-    gameState.players[player].inJail = true;
-    gameState.players[player].position = 10; // Jail position
-    // Update visual position
+    const currentPlayer = gameState.players[player];
+    currentPlayer.inJail = true;
+    currentPlayer.jailTurns = 0; // Reset jail turn count
+    currentPlayer.position = 10; // Move directly to Jail
+
+    // Update the player's token position to the Jail space
+    const jailSpace = document.querySelector('[data-position="10"]');
+    const token = document.querySelector(`.player-token.player-${player}`);
+    if (jailSpace && token) {
+        jailSpace.appendChild(token);
+        token.style.display = "block"; // Ensure the token is visible
+    }
+
+    console.log(`Player ${player} is sent to Jail.`);
+    updateTurnDisplay();
+    
+}
+
+function showJailOptions(player) {
+    const dialogArea = document.getElementById('dialog-area');
+    if (!dialogArea) {
+        console.error('Dialog area not found.');
+        return;
+    }
+
+    // Clear any existing dialog
+    dialogArea.innerHTML = '';
+
+    // Create the Jail options dialog
+    const currentPlayer = gameState.players[player];
+    const hasGetOutOfJailCard = currentPlayer.getOutOfJailFree;
+
+    const dialog = document.createElement('div');
+    dialog.className = 'jail-options-dialog';
+    dialog.innerHTML = `
+        <h3>Player ${player} is in Jail</h3>
+        <p>Choose an option to get out of Jail:</p>
+        ${hasGetOutOfJailCard ? `<button onclick="useGetOutOfJailCard(${player})">Use Get Out of Jail Free Card</button>` : ''}
+        <button onclick="payJailFine(${player})">Pay $50 Fine</button>
+        <button onclick="rollDice()">Try Rolling Doubles</button>
+        <p class="timer">Decide In: <span id="jail-action-timer">20</span> seconds</p>
+    `;
+    dialogArea.appendChild(dialog);
+
+    // Start the decision timer
+    startActionTimer(() => {
+        console.log(`Player ${player} did not make a decision in time. Ending their turn.`);
+        resetDialog(); // Clear the dialog
+        // endTurn(); // Automatically end the turn
+        enableGameControls(); // Re-enable game controls
+    }, 'jail-action-timer');
+}
+
+function useGetOutOfJailCard(player) {
+    const currentPlayer = gameState.players[player];
+    if (currentPlayer.getOutOfJailFree) {
+        console.log(`Player ${player} used a GET OUT OF JAIL FREE card.`);
+        currentPlayer.getOutOfJailFree = false;
+        currentPlayer.inJail = false;
+        currentPlayer.jailTurns = 0;
+
+        // Clear the Jail options dialog
+        const dialogArea = document.getElementById('dialog-area');
+        if (dialogArea) dialogArea.innerHTML = '';
+
+        enableGameControls(); // Re-enable game controls
+        updateTurnDisplay();
+    } else {
+        alert('You do not have a GET OUT OF JAIL FREE card.');
+    }
+}
+
+function payJailFine(player) {
+    const currentPlayer = gameState.players[player];
+    const fineAmount = 50;
+
+    console.log(`Player ${player} needs to pay $${fineAmount} to get out of Jail.`);
+    payMoney(player, fineAmount); // Use updated payMoney logic
+
+    if (gameState.players[player].money >= 0) { // Ensure the player has enough money after paying
+        currentPlayer.inJail = false;
+        currentPlayer.jailTurns = 0;
+
+        console.log(`Player ${player} paid the fine and is released from Jail.`);
+
+        // Clear the Jail options dialog
+        const dialogArea = document.getElementById('dialog-area');
+        if (dialogArea) dialogArea.innerHTML = '';
+
+        enableGameControls(); // Re-enable game controls
+        updateTurnDisplay(); // Update the UI to reflect the player's status
+    } else {
+        console.log(`Player ${player} could not pay the fine. Remaining in Jail.`);
+    }
 }
 
 // Turn Management
@@ -1180,6 +1469,9 @@ function endTurn() {
     rollCount = 0; // Reset the roll count
     updateRollButtonState(); // Update the roll button state
 
+    // Clear any active dialog
+    resetDialog();
+
     // Find the next active player
     do {
         gameState.currentPlayer = (gameState.currentPlayer % 4) + 1;
@@ -1187,7 +1479,35 @@ function endTurn() {
 
     updateTurnDisplay(); // Update the UI to show the current player's turn
     console.log(`It's now Player ${gameState.currentPlayer}'s turn.`);
-    startRollTimer(); // Start the roll timer for the next player
+
+    // Check for a winner
+    checkForWinner();
+
+    // Start the next turn if no winner
+    if (Object.keys(gameState.players).filter(player => !gameState.players[player].isBankrupt).length > 1) {
+        startTurn();
+    }
+}
+
+function resetDialog() {
+    const dialogArea = document.getElementById('dialog-area');
+    if (dialogArea) {
+        dialogArea.innerHTML = ''; // Clear the dialog content
+    }
+}
+
+function startTurn() {
+    const currentPlayer = gameState.currentPlayer;
+    const playerState = gameState.players[currentPlayer];
+
+    if (playerState.inJail) {
+        console.log(`Player ${currentPlayer} is in Jail. Showing Jail options.`);
+        disableGameControls()
+        showJailOptions(currentPlayer);
+    } else {
+        console.log(`Player ${currentPlayer}'s turn. They are not in Jail.`);
+        startRollTimer(); // Start the roll timer for the player's turn
+    }
 }
 
 // UI Updates
@@ -1196,7 +1516,27 @@ function updateFundsDisplay() {
         const fundsElement = document.getElementById(`player${i}-funds`);
         if (fundsElement) {
             fundsElement.style.display = "block"; // Ensure visibility
-            fundsElement.textContent = `Player ${i}: $${gameState.players[i].money}`;
+            const colorIndicator = fundsElement.querySelector('.player-color-indicator');
+            if (!colorIndicator) {
+                // Add the color indicator if it doesn't exist
+                const indicator = document.createElement('span');
+                indicator.className = 'player-color-indicator';
+                fundsElement.prepend(indicator);
+            }
+
+            // Update the color and text
+            const playerState = gameState.players[i];
+            if (playerState.isBankrupt) {
+                fundsElement.style.color = 'grey'; // Dim the text
+                fundsElement.style.opacity = '0.5'; // Dim the entire element
+                colorIndicator.style.backgroundColor = 'grey'; // Dim the color indicator
+            } else {
+                fundsElement.style.color = 'black'; // Reset text color
+                fundsElement.style.opacity = '1'; // Reset opacity
+                colorIndicator.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue(`--color-player-${i}`);
+            }
+
+            fundsElement.lastChild.textContent = `Player ${i}: $${playerState.money}`; // Update text
         } else {
             console.error(`Funds element for Player ${i} not found.`);
         }
@@ -1261,25 +1601,93 @@ function updateRollButtonState() {
 function handleBankruptcy(player) {
     console.log(`Player ${player} is bankrupt!`);
 
-    // Remove ownership of all properties owned by the bankrupt player
+    const creditor = gameState.players[player].creditor; // Determine the creditor (another player or the Bank)
+    const auctionQueue = []; // Queue for properties to be auctioned
+
+    // Handle buildings: Sell them back to the Bank for half their cost
     propertyData.forEach(property => {
         if (property.owner === player) {
-            property.owner = null;
-            console.log(`Property "${property.name}" is now unowned.`);
+            if (property.houses > 0 || property.hasHotel) {
+                const buildingValue = property.hasHotel
+                    ? property.hotelCost / 2
+                    : property.houses * (property.houseCost / 2);
+                console.log(`Selling buildings on ${property.name} for $${buildingValue}.`);
+                addMoney(player, buildingValue);
+                property.houses = 0;
+                property.hasHotel = false;
+            }
         }
     });
 
-    // Set the player's money to 0
-    gameState.players[player].money = 0;
+    // Handle mortgaged and non-mortgaged properties
+    propertyData.forEach(property => {
+        if (property.owner === player) {
+            if (property.mortgaged) {
+                const interest = Math.ceil(property.loanableAmount * 0.1); // 10% interest
+                if (creditor && !gameState.players[creditor].isBankrupt) {
+                    console.log(`Transferring mortgaged property ${property.name} to Player ${creditor}.`);
+                    property.owner = creditor;
+                    payMoney(creditor, interest, null); // Creditor pays the interest
+                } else {
+                    console.log(`Adding mortgaged property ${property.name} to auction queue.`);
+                    property.owner = null; // Bank takes ownership
+                    auctionQueue.push(property.position); // Add to auction queue
+                }
+            } else {
+                if (creditor && !gameState.players[creditor].isBankrupt) {
+                    console.log(`Transferring property ${property.name} to Player ${creditor}.`);
+                    property.owner = creditor;
+                } else {
+                    console.log(`Adding property ${property.name} to auction queue.`);
+                    property.owner = null; // Bank takes ownership
+                    auctionQueue.push(property.position); // Add to auction queue
+                }
+            }
+        }
+    });
+
+    // Remove the bankrupt player's token from the board
+    const token = document.querySelector(`.player-token.player-${player}`);
+    if (token) {
+        token.remove();
+    }
 
     // Mark the player as bankrupt and remove them from the game
+    gameState.players[player].money = 0;
     gameState.players[player].isBankrupt = true;
 
-    // Notify other players
+    console.log(`Player ${player} has been removed from the game.`);
     alert(`Player ${player} is bankrupt and has been removed from the game!`);
 
-    // Skip the bankrupt player's turn
-    endTurn();
+    // Start the auction process for queued properties
+    if (auctionQueue.length > 0) {
+        console.log(`Starting auction for properties: ${auctionQueue}`);
+        startAuctionQueue(auctionQueue);
+    } else {
+        // End the turn and move to the next player if no properties to auction
+        endTurn();
+    }
+}
+
+function startAuctionQueue(auctionQueue) {
+    if (auctionQueue.length === 0) {
+        console.log("Auction queue is empty. Ending turn.");
+        endTurn();
+        return;
+    }
+
+    const propertyPosition = auctionQueue.shift(); // Get the next property in the queue
+    console.log(`Starting auction for property at position ${propertyPosition}.`);
+    startAuction(propertyPosition);
+
+    // After the auction ends, continue with the next property in the queue
+    const auctionEndCallback = () => {
+        console.log(`Auction for property at position ${propertyPosition} completed.`);
+        startAuctionQueue(auctionQueue); // Start the next auction
+    };
+
+    // Attach the callback to the auction end logic
+    gameState.auctionEndCallback = auctionEndCallback;
 }
 
 function manageProperties() {
@@ -1397,12 +1805,19 @@ function buildHouse(position) {
             return;
         }
 
+        const allHaveFourHouses = colorGroup.every(p => p.houses === 4);
+        if (!allHaveFourHouses) {
+            alert('All properties in the color group must have four houses before building a hotel.');
+            return;
+        }
+
         const hotelCost = property.hotelCost;
         if (gameState.players[gameState.currentPlayer].money < hotelCost) {
             alert(`You do not have enough money to build a hotel on ${property.name}. It costs $${hotelCost}.`);
             return;
         }
 
+        // Exchange four houses for a hotel
         property.houses = 0;
         property.hasHotel = true;
         payMoney(gameState.currentPlayer, hotelCost);
@@ -1431,12 +1846,21 @@ function sellHouse(position) {
         return;
     }
 
+    const colorGroup = propertyData.filter(p => p.color === property.color && p.type === 'property');
+    const maxHouses = Math.max(...colorGroup.map(p => p.houses));
+
     if (property.hasHotel) {
+        // Selling a hotel converts it back to 4 houses
         property.hasHotel = false;
         property.houses = 4;
         addMoney(gameState.currentPlayer, property.hotelCost / 2);
         alert(`The hotel on ${property.name} has been sold for $${property.hotelCost / 2}.`);
     } else if (property.houses > 0) {
+        if (property.houses < maxHouses) {
+            alert('You must sell houses evenly across all properties in the color group.');
+            return;
+        }
+
         property.houses--;
         addMoney(gameState.currentPlayer, property.houseCost / 2);
         alert(`A house on ${property.name} has been sold for $${property.houseCost / 2}.`);
@@ -1529,30 +1953,40 @@ function makeOffer() {
     const price = Number(document.getElementById('offer-price').value); // Ensure price is a number
 
     if (!propertyPosition || isNaN(price) || price <= 0) {
-        alert('Invalid offer.');
+        alert('Invalid offer. Please select a property and enter a valid price.');
         return;
     }
 
     const property = propertyData.find(p => p.position == propertyPosition);
     if (!property) {
-        alert('Invalid property.');
+        alert('Invalid property selected.');
         return;
     }
 
-    const accept = confirm(`Player ${property.owner}, do you accept the offer to sell ${property.name} for $${price}?`);
+    const seller = property.owner;
+    const buyer = gameState.currentPlayer;
+
+    if (!seller || seller === buyer) {
+        alert('You cannot make an offer for this property.');
+        return;
+    }
+
+    const accept = confirm(`Player ${seller}, do you accept the offer to sell ${property.name} for $${price}?`);
     if (accept) {
-        if (gameState.players[gameState.currentPlayer].money >= price) {
-            property.owner = gameState.currentPlayer;
-            addMoney(property.owner, price);
-            payMoney(gameState.currentPlayer, price);
-            alert(`Player ${gameState.currentPlayer} bought ${property.name} for $${price}.`);
+        if (gameState.players[buyer].money >= price) {
+            // Transfer ownership and update funds
+            property.owner = buyer;
+            payMoney(buyer, price);
+            addMoney(seller, price);
+
+            alert(`Player ${buyer} successfully purchased ${property.name} from Player ${seller} for $${price}.`);
             updatePropertiesDisplay();
             closeDialog();
         } else {
-            alert(`Player ${gameState.currentPlayer} does not have enough money.`);
+            alert(`Player ${buyer} does not have enough money to complete this purchase.`);
         }
     } else {
-        alert(`Player ${property.owner} declined the offer.`);
+        alert(`Player ${seller} declined the offer.`);
     }
 }
 
@@ -1618,3 +2052,147 @@ updateFundsDisplay();
 updateTurnDisplay();
 startRollTimer();
 
+function checkForWinner() {
+    const activePlayers = Object.keys(gameState.players).filter(player => !gameState.players[player].isBankrupt);
+
+    if (activePlayers.length === 1) {
+        const winner = activePlayers[0];
+        console.log(`Player ${winner} is the last player remaining and wins the game!`);
+        alert(`Player ${winner} wins the game! Congratulations!`);
+
+        // End the game
+        endGame(winner);
+    }
+}
+
+function endGame(winner) {
+    // Disable all game controls
+    disableGameControls();
+
+    // Display a winning message
+    const dialogArea = document.getElementById('dialog-area');
+    if (dialogArea) {
+        dialogArea.innerHTML = `
+            <h2>Game Over</h2>
+            <p>Player ${winner} is the winner!</p>
+        `;
+    }
+
+    // Optionally, reset the game or reload the page
+    console.log("Game has ended. Reload the page to start a new game.");
+}
+  
+// Modify `endTurn` to check for a winner after each turn
+function endTurn() {
+    console.log(`Ending Player ${gameState.currentPlayer}'s turn.`);
+    hasRolled = false; // Reset the roll status for the next player
+    rollCount = 0; // Reset the roll count
+    updateRollButtonState(); // Update the roll button state
+
+    // Clear any active dialog
+    resetDialog();
+
+    // Find the next active player
+    do {
+        gameState.currentPlayer = (gameState.currentPlayer % 4) + 1;
+    } while (gameState.players[gameState.currentPlayer].isBankrupt);
+
+    updateTurnDisplay(); // Update the UI to show the current player's turn
+    console.log(`It's now Player ${gameState.currentPlayer}'s turn.`);
+
+    // Check for a winner
+    checkForWinner();
+
+    // Start the next turn if no winner
+    if (Object.keys(gameState.players).filter(player => !gameState.players[player].isBankrupt).length > 1) {
+        startTurn();
+    }
+}
+
+function handleRentPayment(player, rent, creditor) {
+    console.log(`Player ${player} cannot afford the rent of $${rent}. Attempting to raise funds...`);
+
+    const currentPlayer = gameState.players[player];
+    let remainingRent = rent;
+
+    // Helper function to pay incrementally
+    const payIncrementally = (amount) => {
+        const payment = Math.min(amount, remainingRent);
+        addMoney(creditor, payment);
+        remainingRent -= payment;
+        console.log(`Player ${player} paid $${payment} to Player ${creditor}. Remaining rent: $${remainingRent}`);
+    };
+
+    // Helper function to sell a hotel
+    const sellHotel = () => {
+        for (const property of propertyData) {
+            if (property.owner === player && property.hasHotel) {
+                const hotelValue = property.hotelCost / 2;
+                console.log(`Selling hotel on ${property.name} for $${hotelValue}.`);
+                property.hasHotel = false;
+                property.houses = 4; // Convert hotel back to 4 houses
+                addMoney(player, hotelValue);
+                console.log(`Player ${player} raised $${hotelValue} by selling a hotel.`);
+                payIncrementally(hotelValue);
+                return true;
+            }
+        }
+        return false;
+    };
+
+    // Helper function to sell a house
+    const sellHouse = () => {
+        const colorGroups = propertyData.reduce((groups, property) => {
+            if (property.owner === player && property.houses > 0) {
+                if (!groups[property.color]) groups[property.color] = [];
+                groups[property.color].push(property);
+            }
+            return groups;
+        }, {});
+
+        for (const group of Object.values(colorGroups)) {
+            const maxHouses = Math.max(...group.map(p => p.houses));
+            for (const property of group) {
+                if (property.houses === maxHouses) {
+                    const houseValue = property.houseCost / 2;
+                    console.log(`Selling house on ${property.name} for $${houseValue}.`);
+                    property.houses--;
+                    addMoney(player, houseValue);
+                    console.log(`Player ${player} raised $${houseValue} by selling a house.`);
+                    payIncrementally(houseValue);
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
+
+    // Helper function to mortgage a property
+    const mortgageProperty = () => {
+        for (const property of propertyData) {
+            if (property.owner === player && !property.mortgaged && property.houses === 0 && !property.hasHotel) {
+                console.log(`Mortgaging ${property.name} for $${property.loanableAmount}.`);
+                property.mortgaged = true;
+                addMoney(player, property.loanableAmount);
+                console.log(`Player ${player} raised $${property.loanableAmount} by mortgaging a property.`);
+                payIncrementally(property.loanableAmount);
+                return true;
+            }
+        }
+        return false;
+    };
+
+    // Attempt to raise funds incrementally
+    while (remainingRent > 0) {
+        if (sellHotel()) continue;
+        if (sellHouse()) continue;
+        if (mortgageProperty()) continue;
+
+        console.log(`Player ${player} cannot raise enough funds to pay the rent. Declaring bankruptcy.`);
+        handleBankruptcy(player);
+        return;
+    }
+
+    // If enough funds are raised, confirm the rent is fully paid
+    console.log(`Player ${player} has successfully paid the rent of $${rent} to Player ${creditor}.`);
+}
